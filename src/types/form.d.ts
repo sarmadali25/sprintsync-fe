@@ -24,3 +24,12 @@ interface FormButtonProps {
   onClick?: () => void;
   className?: string;
 }
+
+interface AuthLayoutProps {
+  title: string;
+  subtitle: string;
+  children: React.ReactNode;
+  footerText?: string;
+  footerActionText?: string;
+  onFooterAction?: () => void;
+}
