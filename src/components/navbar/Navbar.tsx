@@ -42,9 +42,13 @@ const Navbar = () => {
           >
             Dashboard
           </button>
-          
         </div>
-        <Button small={true}>Book a call</Button>
+        <Button variant="secondary" onClick={() => navigate("/login")}>
+          <Text variant="medium" className="">
+            Sign In
+          </Text>
+        </Button>
+        
       </div>
     </div>
   );
