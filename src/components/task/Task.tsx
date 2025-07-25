@@ -70,7 +70,7 @@ const Task = () => {
     }, []);
 
     return (
-        <div className="md:max-w-[1600px] w-full flex flex-col items-center justify-center bg-gradient-to-b from-gray-200 to-gray-300 rounded-lg shadow-lg px-5">
+        <div className="md:max-w-[1600px] w-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 rounded-lg shadow-lg px-5">
         {/* Header */}
         <div className="w-full flex items-center justify-between bg-white px-5 py-2 my-3 rounded-lg">
           <Text variant="h0" className="text-primary">
