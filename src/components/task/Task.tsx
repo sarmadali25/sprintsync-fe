@@ -72,11 +72,11 @@ const Task = () => {
     return (
         <div className="md:max-w-[1600px] w-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 rounded-lg shadow-lg px-5">
         {/* Header */}
-        <div className="w-full flex items-center justify-between bg-white px-5 py-2 my-3 rounded-lg">
-          <Text variant="h0" className="text-primary">
+        <div className="w-full flex sm:flex-row flex-col sm:items-center sm:justify-between bg-white px-5 py-2 my-3 rounded-lg gap-2 sm:gap-0">
+          <Text variant="h1" weight="semibold" className="text-primary">
             Work Board
           </Text>
-          <Button variant="primary">
+          <Button variant="primary" className="w-fit">
             <Text variant="medium" className="">
               Create Board
             </Text>
