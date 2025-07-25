@@ -14,7 +14,7 @@ const MobileNavbar = () => {
   };
   return (
     <div className="flex w-full h-full justify-between items-center bg-white/60 backdrop-blur-sm px-4">
-      <img src='./logo/creative-logo-light.svg' className="w-32"/>
+      <Text variant="h1" className="text-primary">SprintSync</Text>
       <button
         onClick={toggleMenu}
         className="p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -60,17 +60,11 @@ const MobileNavbar = () => {
               Dashboard
             </Text>
           </button>
-          <Button
-          >
-            <Text
-              variant="h4"
-              weight="medium"
-              align="center"
-              className="text-white"
-            >
-              Book a Call
-            </Text>
-          </Button>
+          <Button variant="secondary" onClick={() => navigate("/login")}>
+          <Text variant="medium" className="">
+            Sign In
+          </Text>
+        </Button>
         </div>
       </div>
     </div>
