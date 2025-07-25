@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { Mail, Lock, Phone } from "lucide-react";
 import { AuthLayout, FormInput, FormButton } from "../../components/form";
+import { useNavigate } from "react-router-dom";
 
 const Signup: React.FC = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState<SignupFormData>({
     firstName: "",
     lastName: "",
@@ -93,6 +95,7 @@ const Signup: React.FC = () => {
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       console.log("Signup successful:", formData);
+      navigate("/login");
     } catch (error) {
       console.error("Signup failed:", error);
     } finally {
@@ -101,8 +104,7 @@ const Signup: React.FC = () => {
   };
 
   const handleLoginClick = () => {
-    // TODO: Navigate to login page
-    console.log("Navigate to login");
+    navigate("/login");
   };
 
   return (
