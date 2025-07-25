@@ -1,6 +1,7 @@
 import { cn } from '../../utils';
 
 const textVariants = {
+  h0: 'text-[32px]', // 32px
   h1: 'text-[30px]', // 30px
   h2: 'text-[24px]', // 24px
   h3: 'text-[20px]', // 20px
@@ -42,7 +43,7 @@ const Text: React.FC<TextProps> = ({
       className={cn(
         textVariants[variant],
         textWeights[weight],
-        'font-poppins text-gray-700',
+        'font-poppins',
         alignClasses[align],
         className,
       )}
