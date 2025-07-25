@@ -1,5 +1,4 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { useScrollDirection } from "../../hooks/useScrollDirection";
 import Button from "../button/Button";
 import { cn } from "../../utils";
 import Text from "../text/Text";
