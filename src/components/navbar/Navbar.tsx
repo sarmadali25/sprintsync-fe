@@ -7,17 +7,12 @@ import Text from "../text/Text";
 const Navbar = () => {
   const navigate = useNavigate();
   const pathname = useLocation().pathname;
-  const isNavbarVisible = useScrollDirection();
 
   return (
     <div
       className={cn(
         "fixed w-full bg-white/70 backdrop-blur-md shadow-md transition-transform duration-300 z-50 flex justify-center items-center",
-        isNavbarVisible ? "translate-y-0" : "-translate-y-full"
       )}
-      style={{
-        transform: isNavbarVisible ? "translateY(0)" : "translateY(-100%)",
-      }}
     >
       <div className="w-[100%] max-w-[1600px] h-[70px] flex justify-between items-center px-6">
         <button className="cursor-pointer" onClick={() => navigate("/")}>
