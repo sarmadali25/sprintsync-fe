@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('../assets/fonts/poppins-v20-latin-300.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../assets/fonts/poppins-v20-latin-regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('../assets/fonts/poppins-v20-latin-500.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../assets/fonts/poppins-v20-latin-600.woff2') format('woff2');
+}
+
+@theme {
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1000px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+  --color-primary: #141B1D;
+  --color-secondary: #5E9DEE;
+  --color-tertiary: #A71F90;
+  --color-tertiary-light: #E52643;
+  --color-background-gray: #F6F4EF;
+  --color-mobile-primary: #FF5757;
+  --color-mobile-secondary: #8068D0;
+  --color-background-gray-100: #F4F4F2;
+  --color-background-gray-200: #E8E8E8;
+  --color-background-gray-300: #BBBFCA;
+}
+
+@keyframes float-in {
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-up-fade {
+  0% {
+    transform: translateY(2rem);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.slide-up{
+  animation: slide-up-fade 0.8s ease-out forwards;
+}
+
+
+
+/* Better font rendering */
+body {
+  font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
