@@ -89,7 +89,7 @@ const Login: React.FC = () => {
       footerActionText="Sign up"
       onFooterAction={handleSignupClick}
     >
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-6 noValidate">
         <FormInput
           id="email"
           name="email"
@@ -101,7 +101,6 @@ const Login: React.FC = () => {
           error={errors.email}
           icon={<Mail className="h-5 w-5 text-gray-400" />}
           disabled={isLoading}
-          required
         />
 
         <FormInput
@@ -118,7 +117,6 @@ const Login: React.FC = () => {
           showPassword={showPassword}
           onTogglePassword={() => setShowPassword(!showPassword)}
           disabled={isLoading}
-          required
         />
 
         {/* <div className="flex items-center justify-end">
