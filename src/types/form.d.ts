@@ -14,3 +14,13 @@ interface FormInputProps {
   disabled?: boolean;
   required?: boolean;
 }
+
+interface FormButtonProps {
+  type?: "submit" | "button";
+  isLoading?: boolean;
+  disabled?: boolean;
+  loadingText?: string;
+  children: React.ReactNode;
+  onClick?: () => void;
+  className?: string;
+}
