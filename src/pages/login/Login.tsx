@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { Mail, Lock } from "lucide-react";
 import { AuthLayout, FormInput, FormButton } from "../../components/form";
+import { useNavigate } from "react-router-dom";
 
 const Login: React.FC = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState<LoginFormData>({
     email: "",
     password: "",
@@ -62,6 +64,7 @@ const Login: React.FC = () => {
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       console.log("Login successful:", formData);
+      navigate("/");
     } catch (error) {
       console.error("Login failed:", error);
     } finally {
@@ -70,8 +73,7 @@ const Login: React.FC = () => {
   };
 
   const handleSignupClick = () => {
-    // TODO: Navigate to signup page
-    console.log("Navigate to signup");
+    navigate("/signup");
   };
 
   const handleForgotPasswordClick = () => {
@@ -119,7 +121,7 @@ const Login: React.FC = () => {
           required
         />
 
-        <div className="flex items-center justify-end">
+        {/* <div className="flex items-center justify-end">
           <button
             type="button"
             onClick={handleForgotPasswordClick}
@@ -127,7 +129,7 @@ const Login: React.FC = () => {
           >
             Forgot password?
           </button>
-        </div>
+        </div> */}
 
         <FormButton
           isLoading={isLoading}
