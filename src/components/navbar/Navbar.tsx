@@ -1,11 +1,20 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Button from "../button/Button";
 import { cn } from "../../utils";
 import Text from "../text/Text";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { logout } from "../../store/slices/userSlice";
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const pathname = useLocation().pathname;
+  const dispatch = useAppDispatch();
+  const { currentUser: { data: currentUser } } = useAppSelector((state) => state.user);
+  
+
+  const handleSignOut = () => {
+    dispatch(logout());
+    navigate("/login");
+  }
 
   return (
     <div
@@ -17,32 +26,19 @@ const Navbar = () => {
         <button className="cursor-pointer" onClick={() => navigate("/")}>
           <Text variant="h1" className="text-primary">SprintSync</Text>
         </button>
-        <div className="flex justify-between items-center gap-4">
-          <button
-            className={cn(
-              "text-sm text-gray-400 hover:text-primary hover:scale-105 cursor-pointer transition-all duration-300",
-              pathname === "/" && "text-primary"
-            )}
-            onClick={() => navigate("/")}
-          >
-            Home
-          </button>
-          <button
-            className={cn(
-              "text-sm text-gray-400 hover:text-primary hover:scale-105 cursor-pointer transition-all duration-300",
-              pathname === "/dashboard" && "text-primary"
-            )}
-            onClick={() => navigate("/dashboard")}
-          >
-            Dashboard
-          </button>
-        </div>
+        {currentUser ? (
+          <Button variant="secondary" onClick={handleSignOut}>
+            <Text variant="medium" className="">
+              Sign Out
+            </Text>
+          </Button>
+        ) : (
         <Button variant="secondary" onClick={() => navigate("/login")}>
           <Text variant="medium" className="">
             Sign In
           </Text>
         </Button>
-        
+        )}
       </div>
     </div>
   );
