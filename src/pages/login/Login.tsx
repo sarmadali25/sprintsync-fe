@@ -4,6 +4,7 @@ import { AuthLayout, FormInput, FormButton } from "../../components/form";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { loginUser } from "../../store/slices/userSlice";
+import { showSuccessToast, showErrorToast } from "../../utils/toast";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -73,7 +74,10 @@ const Login: React.FC = () => {
     if (loginData && !loginError) {
       navigate("/task");
     } else if (loginError) {
-      alert(loginError);
+      showErrorToast({
+        title: "Login Failed",
+        text: loginError
+      });
     }
   }, [isLoading, loginData, loginError, dispatch, navigate]);
   return (

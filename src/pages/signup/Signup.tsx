@@ -4,6 +4,7 @@ import { AuthLayout, FormInput, FormButton } from "../../components/form";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { registerUser, clearRegisterUser } from "../../store/slices/userSlice";
+import { showSuccessToast, showErrorToast } from "../../utils/toast";
 
 const Signup: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -117,10 +118,17 @@ const Signup: React.FC = () => {
     if (isLoading) return; 
 
     if (registerData && !registerError) {
+      showSuccessToast({
+        title: "Account Created!",
+        text: "Your account has been created successfully. Please sign in to continue."
+      });
       dispatch(clearRegisterUser());
       navigate("/login");
     } else if (registerError) {
-      alert(registerError);
+      showErrorToast({
+        title: "Registration Failed",
+        text: registerError
+      });
     }
   }, [isLoading, registerData, registerError]);
 
