@@ -9,6 +9,7 @@ const Signup: React.FC = () => {
   const dispatch = useAppDispatch();
   const {
     registerUser: { loading: isLoading, error: registerError, data: registerData },
+    currentUser: { error: loginError, data: loginData }
   } = useAppSelector((state) => state.user);
   const navigate = useNavigate();
   const [formData, setFormData] = useState<SignupFormData>({
@@ -121,7 +122,13 @@ const Signup: React.FC = () => {
     } else if (registerError) {
       alert(registerError);
     }
-  }, [isLoading, registerData, registerError, dispatch, navigate]);
+  }, [isLoading, registerData, registerError]);
+
+  useEffect(() => {
+    if (loginData && !loginError) {
+      navigate("/");
+    } 
+  }, [loginData, loginError]);
 
 
   return (

@@ -1,17 +1,20 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Mail, Lock } from "lucide-react";
 import { AuthLayout, FormInput, FormButton } from "../../components/form";
 import { useNavigate } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { loginUser } from "../../store/slices/userSlice";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const { currentUser: { loading: isLoading, error: loginError, data: loginData } } = useAppSelector((state) => state.user);
   const [formData, setFormData] = useState<LoginFormData>({
     email: "",
     password: "",
   });
   const [errors, setErrors] = useState<LoginFormErrors>({});
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
   const validateForm = (): boolean => {
     const newErrors: LoginFormErrors = {};
@@ -57,30 +60,22 @@ const Login: React.FC = () => {
       return;
     }
 
-    setIsLoading(true);
-
-    try {
-      // TODO: Implement API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      console.log("Login successful:", formData);
-      navigate("/");
-    } catch (error) {
-      console.error("Login failed:", error);
-    } finally {
-      setIsLoading(false);
-    }
+    await dispatch(loginUser(formData));
   };
 
   const handleSignupClick = () => {
     navigate("/signup");
   };
 
-  const handleForgotPasswordClick = () => {
-    // TODO: Navigate to forgot password page
-    console.log("Navigate to forgot password");
-  };
+  useEffect(() => {
+    if (isLoading) return;
 
+    if (loginData && !loginError) {
+      navigate("/");
+    } else if (loginError) {
+      alert(loginError);
+    }
+  }, [isLoading, loginData, loginError, dispatch, navigate]);
   return (
     <AuthLayout
       title="Welcome Back"
