@@ -35,7 +35,7 @@ const AppRouter = () => {
     { path: "/signup", component: <Signup /> },
   ];
   const mainRoutes = [
-    {path: "/", component: <Home />},
+    {path: "/task", component: <Home />},
   ];
 
   return (

@@ -71,7 +71,7 @@ const Login: React.FC = () => {
     if (isLoading) return;
     
     if (loginData && !loginError) {
-      navigate("/");
+      navigate("/task");
     } else if (loginError) {
       alert(loginError);
     }

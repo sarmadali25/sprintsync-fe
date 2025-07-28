@@ -38,7 +38,7 @@ const TaskList = ({
   return (
     <div className="w-full flex flex-col bg-white rounded-xl shadow-sm border border-gray-100 min-h-[70vh] max-h-[70vh] overflow-hidden">
       {/* Header */}
-      <div className="w-full flex items-center justify-between px-6 py-4 bg-gradient-to-r from-gray-50 to-white border-b border-gray-100 sticky top-0 z-10">
+      <div className="w-full flex items-center justify-between px-6 py-4 bg-gradient-to-r from-gray-50 to-white border-b border-gray-100 sticky top-0 z-[0]">
         <div className="flex items-center gap-3">
           <div className={`w-3 h-3 rounded-full ${
             heading.toLowerCase() === 'todo' ? 'bg-orange-400' :
