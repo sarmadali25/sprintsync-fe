@@ -3,6 +3,25 @@ import { Eye, EyeOff } from "lucide-react";
 import { cn } from "../../utils";
 import Text from "../text/Text";
 
+interface FormInputProps {
+  id: string;
+  name: string;
+  label: string;
+  type?: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  placeholder?: string;
+  error?: string;
+  icon?: React.ReactNode;
+  showPasswordToggle?: boolean;
+  showPassword?: boolean;
+  onTogglePassword?: () => void;
+  disabled?: boolean;
+  required?: boolean;
+  textarea?: boolean;
+  rows?: number;
+}
+
 const FormInput: React.FC<FormInputProps> = ({
   id,
   name,
@@ -18,6 +37,8 @@ const FormInput: React.FC<FormInputProps> = ({
   onTogglePassword,
   disabled = false,
   required = false,
+  textarea = false,
+  rows = 4,
 }) => {
   const inputType = type === "password" && showPassword ? "text" : type;
 
@@ -30,33 +51,56 @@ const FormInput: React.FC<FormInputProps> = ({
         </Text>
       </label>
       <div className="relative">
-        {icon && (
+        {icon && !textarea && (
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             {icon}
           </div>
         )}
-        <input
-          id={id}
-          name={name}
-          type={inputType}
-          value={value}
-          onChange={onChange}
-          className={cn(
-            "block w-full py-3 border rounded-lg text-sm transition-colors duration-200",
-            "font-poppins text-gray-700",
-            "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent",
-            icon ? "pl-10" : "pl-3",
-            showPasswordToggle ? "pr-12" : "pr-3",
-            error
-              ? "border-red-300 bg-red-50"
-              : "border-gray-300 bg-white hover:border-gray-400",
-            disabled && "opacity-50 cursor-not-allowed"
-          )}
-          placeholder={placeholder}
-          disabled={disabled}
-          required={required}
-        />
-        {showPasswordToggle && (
+        {textarea ? (
+          <textarea
+            id={id}
+            name={name}
+            value={value}
+            onChange={onChange}
+            rows={rows}
+            className={cn(
+              "block w-full py-3 border rounded-lg text-sm transition-colors duration-200",
+              "font-poppins text-gray-700 resize-none",
+              "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent",
+              "pl-3 pr-3",
+              error
+                ? "border-red-300 bg-red-50"
+                : "border-gray-300 bg-white hover:border-gray-400",
+              disabled && "opacity-50 cursor-not-allowed"
+            )}
+            placeholder={placeholder}
+            disabled={disabled}
+            required={required}
+          />
+        ) : (
+          <input
+            id={id}
+            name={name}
+            type={inputType}
+            value={value}
+            onChange={onChange}
+            className={cn(
+              "block w-full py-3 border rounded-lg text-sm transition-colors duration-200",
+              "font-poppins text-gray-700",
+              "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent",
+              icon ? "pl-10" : "pl-3",
+              showPasswordToggle ? "pr-12" : "pr-3",
+              error
+                ? "border-red-300 bg-red-50"
+                : "border-gray-300 bg-white hover:border-gray-400",
+              disabled && "opacity-50 cursor-not-allowed"
+            )}
+            placeholder={placeholder}
+            disabled={disabled}
+            required={required}
+          />
+        )}
+        {showPasswordToggle && !textarea && (
           <button
             type="button"
             onClick={onTogglePassword}

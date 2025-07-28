@@ -42,6 +42,8 @@ const Task = () => {
 
     const handleCreateTask = async (taskData: any) => {
       // TODO: post request
+      console.log("taskData", taskData);
+      
     };
 
     return (

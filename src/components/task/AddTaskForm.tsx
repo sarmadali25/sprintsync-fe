@@ -24,7 +24,7 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ isOpen, onClose, onSubmit }) 
   const [errors, setErrors] = useState<Partial<TaskFormData>>({});
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -112,7 +112,7 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ isOpen, onClose, onSubmit }) 
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="p-6 space-y-4" noValidate>
           <FormInput
             id="title"
             name="title"
@@ -135,6 +135,8 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ isOpen, onClose, onSubmit }) 
             placeholder="Enter task description"
             error={errors.description}
             required
+            textarea={true}
+            rows={4}
           />
 
           <FormInput
