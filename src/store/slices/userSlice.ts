@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { apiPost } from '../../utils/api';
+import { apiGet, apiPost } from '../../utils/api';
 
 export interface UserAttributes {
   id: string;
@@ -41,7 +41,7 @@ const initialState: UserState = {
 export const loginUser = createAsyncThunk(
   'user/loginUser',
   async (credentials: { email: string; password: string }) => {
-    const response = await apiPost('/login', credentials);
+    const response = await apiPost('/auth/login', credentials);
     
     if (response.status !== 200) {
       throw new Error('Login failed');
@@ -54,7 +54,7 @@ export const loginUser = createAsyncThunk(
 export const registerUser = createAsyncThunk(
   'user/registerUser',
   async (userData: Omit<UserAttributes, 'id' | 'createdAt' | 'updatedAt'>) => {
-    const response = await apiPost('/signup', userData);
+    const response = await apiPost('/auth/signup', userData);
 
     if (response.status === 400) {
       throw new Error(response.data.message);
@@ -62,6 +62,18 @@ export const registerUser = createAsyncThunk(
     
     if (response.status !== 201 && response.status !== 200) {
       throw new Error('Registration failed');
+    }
+    return response.data;
+  }
+);
+
+export const fetchCurrentUser = createAsyncThunk(
+  'user/fetchCurrentUser',
+  async () => {
+    const response = await apiGet('/auth/me');
+
+    if (response.status !== 200) {
+      throw new Error(response.data.message || 'Failed to fetch current user');
     }
     return response.data;
   }
@@ -116,6 +128,20 @@ const userSlice = createSlice({
       .addCase(registerUser.rejected, (state, action) => {
         state.registerUser.loading = false;
         state.registerUser.error = action.error.message || 'Registration failed';
+      })
+      // Fetch current user
+      .addCase(fetchCurrentUser.pending, (state) => {
+        state.currentUser.loading = true;
+        state.currentUser.error = null;
+      })
+      .addCase(fetchCurrentUser.fulfilled, (state, action) => {
+        state.currentUser.loading = false;
+        state.currentUser.data = action.payload.data;
+        state.currentUser.error = null;
+      })
+      .addCase(fetchCurrentUser.rejected, (state, action) => {
+        state.currentUser.loading = false;
+        state.currentUser.error = action.error.message || 'Failed to fetch current user';
       })
   },
 });
