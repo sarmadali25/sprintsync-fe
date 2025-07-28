@@ -8,8 +8,7 @@ import { logout } from "../../store/slices/userSlice";
 const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { currentUser: { data: currentUser } } = useAppSelector((state) => state.user);
-  
+  const { user } = useAppSelector((state) => state.user);
 
   const handleSignOut = () => {
     dispatch(logout());
@@ -26,7 +25,7 @@ const Navbar = () => {
         <button className="cursor-pointer" onClick={() => navigate("/")}>
           <Text variant="h1" className="text-primary">SprintSync</Text>
         </button>
-        {currentUser ? (
+        {user ? (
           <Button variant="secondary" onClick={handleSignOut}>
             <Text variant="medium" className="">
               Sign Out

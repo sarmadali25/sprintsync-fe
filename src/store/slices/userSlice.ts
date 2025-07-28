@@ -13,7 +13,7 @@ export interface UserAttributes {
 }
 
 interface UserState {
-  currentUser: {
+  user: {
     loading: boolean;
     error: string | null;
     data : UserAttributes | null;
@@ -26,7 +26,7 @@ interface UserState {
 }
 
 const initialState: UserState = {
-  currentUser: {
+  user: {
     loading: false,
     error: null,
     data : null
@@ -48,7 +48,8 @@ export const loginUser = createAsyncThunk(
     }
     
     localStorage.setItem('token', response?.data?.data?.token);
-    return response?.data;
+
+    return response?.data?.data?.user;
   }
 );
 
@@ -64,7 +65,7 @@ export const registerUser = createAsyncThunk(
     if (response.status !== 201 && response.status !== 200) {
       throw new Error(response?.data?.message || 'Registration failed');
     }
-    return response?.data;
+    return response?.data?.data?.user;
   }
 );
 
@@ -76,7 +77,7 @@ export const fetchCurrentUser = createAsyncThunk(
     if (response.status !== 200) {
       throw new Error(response?.data?.message || 'Failed to fetch current user');
     }
-    return response?.data;
+    return response?.data?.data?.user;
   }
 );
 
@@ -86,7 +87,7 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     logout: (state) => {
-      state.currentUser = {
+      state.user = {
         loading: false,
         error: null,
         data : null
@@ -104,16 +105,17 @@ const userSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(loginUser.pending, (state) => {
-        state.currentUser.loading = true;
-        state.currentUser.error = null;
+        state.user.loading = true;
+        state.user.error = null;
       })
       .addCase(loginUser.fulfilled, (state, action) => {
-        state.currentUser.loading = false;
-        state.currentUser.data = action.payload.data;
+        state.user.loading = false;
+        state.user.data = action.payload;
+        state.user.error = null;
       })
       .addCase(loginUser.rejected, (state, action) => {
-        state.currentUser.loading = false;
-        state.currentUser.error = action.error.message || 'Login failed';
+        state.user.loading = false;
+        state.user.error = action.error.message || 'Login failed';
       })
       // Register
       .addCase(registerUser.pending, (state) => {
@@ -122,7 +124,7 @@ const userSlice = createSlice({
       })
       .addCase(registerUser.fulfilled, (state, action) => {
         state.registerUser.loading = false;
-        state.registerUser.data = action.payload.data;
+        state.registerUser.data = action.payload;
         state.registerUser.error = null;
 
       })
@@ -132,17 +134,17 @@ const userSlice = createSlice({
       })
       // Fetch current user
       .addCase(fetchCurrentUser.pending, (state) => {
-        state.currentUser.loading = true;
-        state.currentUser.error = null;
+        state.user.loading = true;
+        state.user.error = null;
       })
       .addCase(fetchCurrentUser.fulfilled, (state, action) => {
-        state.currentUser.loading = false;
-        state.currentUser.data = action.payload.data;
-        state.currentUser.error = null;
+        state.user.loading = false;
+        state.user.data = action.payload;
+        state.user.error = null;
       })
       .addCase(fetchCurrentUser.rejected, (state, action) => {
-        state.currentUser.loading = false;
-        state.currentUser.error = action.error.message || 'Failed to fetch current user';
+        state.user.loading = false;
+        state.user.error = action.error.message || 'Failed to fetch current user';
       })
   },
 });

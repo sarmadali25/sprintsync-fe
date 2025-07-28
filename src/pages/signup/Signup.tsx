@@ -9,7 +9,7 @@ const Signup: React.FC = () => {
   const dispatch = useAppDispatch();
   const {
     registerUser: { loading: isLoading, error: registerError, data: registerData },
-    currentUser: { error: loginError, data: loginData }
+    user: { error: loginError, data: loginData }
   } = useAppSelector((state) => state.user);
   const navigate = useNavigate();
   const [formData, setFormData] = useState<SignupFormData>({

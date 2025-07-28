@@ -8,7 +8,7 @@ import { loginUser } from "../../store/slices/userSlice";
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { currentUser: { loading: isLoading, error: loginError, data: loginData } } = useAppSelector((state) => state.user);
+  const { user: { loading: isLoading, error: loginError, data: loginData } } = useAppSelector((state) => state.user);
   const [formData, setFormData] = useState<LoginFormData>({
     email: "",
     password: "",
@@ -69,7 +69,7 @@ const Login: React.FC = () => {
 
   useEffect(() => {
     if (isLoading) return;
-
+    
     if (loginData && !loginError) {
       navigate("/");
     } else if (loginError) {

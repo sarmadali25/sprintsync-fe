@@ -1,9 +1,33 @@
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import { useEffect } from "react";
 import MainLayout from "../layout/main-layout/MainLayout";
 import Home from "../pages/home/Home";
 import Login from "../pages/login/Login";
 import Signup from "../pages/signup/Signup";
-import Dashboard from "../pages/dashboard/Dashboard";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { fetchCurrentUser } from "../store/slices/userSlice";
+
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const token = localStorage.getItem('token');
+  const { user: { data: currentUser, loading } } = useAppSelector((state) => state.user);
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    if (token && !currentUser?.id) {
+      dispatch(fetchCurrentUser());
+    }
+  }, [token, currentUser, dispatch]);
+
+  if (loading) {
+    return <div className="flex items-center justify-center h-screen">Loading...</div>;
+  }
+
+  if (!token && !currentUser) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return <>{children}</>;
+};
 
 const AppRouter = () => {
   const publicRoutes = [
@@ -11,20 +35,12 @@ const AppRouter = () => {
     { path: "/signup", component: <Signup /> },
   ];
   const mainRoutes = [
-    { path: "/dashboard", component: <Dashboard /> },
+    {path: "/", component: <Home />},
   ];
 
   return (
     <Router>
       <Routes>
-        <Route
-          path="/"
-          element={
-            <MainLayout>
-              <Home />
-            </MainLayout>
-          }
-        />
         {publicRoutes.map(({ path, component }, index) => (
           <Route
             key={index}
@@ -36,7 +52,11 @@ const AppRouter = () => {
           <Route
             key={index}
             path={path}
-            element={<MainLayout>{component}</MainLayout>}
+            element={
+              <ProtectedRoute>
+                <MainLayout>{component}</MainLayout>
+              </ProtectedRoute>
+            }
           />
         ))}
         {/* TODO: Add 404 page */}
