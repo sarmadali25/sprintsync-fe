@@ -2,9 +2,9 @@ interface SignupFormData {
     firstName: string;
     lastName: string;
     email: string;
-    phone: string;
     password: string;
     confirmPassword: string;
+    phoneNumber: string;
   }
   
   interface SignupFormErrors {
@@ -14,4 +14,5 @@ interface SignupFormData {
     phone?: string;
     password?: string;
     confirmPassword?: string;
+    phoneNumber?: string;
   }

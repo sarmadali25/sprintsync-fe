@@ -1,22 +1,27 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Mail, Lock, Phone } from "lucide-react";
 import { AuthLayout, FormInput, FormButton } from "../../components/form";
 import { useNavigate } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { registerUser, clearRegisterUser } from "../../store/slices/userSlice";
 
 const Signup: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const {
+    registerUser: { loading: isLoading, error: registerError, data: registerData },
+  } = useAppSelector((state) => state.user);
   const navigate = useNavigate();
   const [formData, setFormData] = useState<SignupFormData>({
     firstName: "",
     lastName: "",
     email: "",
-    phone: "",
     password: "",
+    phoneNumber: "",
     confirmPassword: "",
   });
   const [errors, setErrors] = useState<SignupFormErrors>({});
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
   const validateForm = (): boolean => {
     const newErrors: SignupFormErrors = {};
@@ -39,10 +44,13 @@ const Signup: React.FC = () => {
     }
 
     // Phone validation
-    if (!formData.phone) {
-      newErrors.phone = "Phone number is required";
-    } else if (formData.phone.replace(/\s/g, "").length < 10 || formData.phone.replace(/\s/g, "").length > 15) {
-      newErrors.phone = "Phone number must be between 10 and 15 digits";
+    if (!formData.phoneNumber) {
+      newErrors.phoneNumber = "Phone number is required";
+    } else if (
+      formData.phoneNumber.replace(/\s/g, "").length < 10 ||
+      formData.phoneNumber.replace(/\s/g, "").length > 15
+    ) {
+      newErrors.phoneNumber = "Phone number must be between 10 and 15 digits";
     }
 
     // Password validation
@@ -51,7 +59,8 @@ const Signup: React.FC = () => {
     } else if (formData.password.length < 8) {
       newErrors.password = "Password must be at least 8 characters";
     } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)) {
-      newErrors.password = "Password must contain at least one uppercase letter, one lowercase letter, and one number";
+      newErrors.password =
+        "Password must contain at least one uppercase letter, one lowercase letter, and one number";
     }
 
     // Confirm password validation
@@ -88,24 +97,32 @@ const Signup: React.FC = () => {
       return;
     }
 
-    setIsLoading(true);
-
-    try {
-      // TODO: Implement API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      console.log("Signup successful:", formData);
-      navigate("/login");
-    } catch (error) {
-      console.error("Signup failed:", error);
-    } finally {
-      setIsLoading(false);
-    }
+    const signUpData = {
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      email: formData.email,
+      password: formData.password,
+      phoneNumber: formData.phoneNumber,
+    };
+    await dispatch(registerUser(signUpData));
   };
 
   const handleLoginClick = () => {
     navigate("/login");
   };
+
+
+  useEffect(() => {
+    if (isLoading) return; 
+
+    if (registerData && !registerError) {
+      dispatch(clearRegisterUser());
+      navigate("/login");
+    } else if (registerError) {
+      alert(registerError);
+    }
+  }, [isLoading, registerData, registerError, dispatch, navigate]);
+
 
   return (
     <AuthLayout
@@ -161,14 +178,14 @@ const Signup: React.FC = () => {
 
         {/* Phone Field */}
         <FormInput
-          id="phone"
-          name="phone"
+          id="phoneNumber"
+          name="phoneNumber"
           label="Phone Number"
           type="tel"
-          value={formData.phone}
+          value={formData.phoneNumber}
           onChange={handleInputChange}
           placeholder="Enter your phone number"
-          error={errors.phone}
+          error={errors.phoneNumber}
           icon={<Phone className="h-5 w-5 text-gray-400" />}
           disabled={isLoading}
           required
@@ -210,10 +227,7 @@ const Signup: React.FC = () => {
         />
 
         {/* Submit Button */}
-        <FormButton
-          isLoading={isLoading}
-          loadingText="Creating account..."
-        >
+        <FormButton isLoading={isLoading} loadingText="Creating account...">
           Create Account
         </FormButton>
       </form>
