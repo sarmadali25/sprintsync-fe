@@ -44,10 +44,11 @@ export const loginUser = createAsyncThunk(
     const response = await apiPost('/auth/login', credentials);
     
     if (response.status !== 200) {
-      throw new Error('Login failed');
+      throw new Error(response?.data?.message || 'Login failed');
     }
-    localStorage.setItem('token', response.data.token);
-    return response.data;
+    
+    localStorage.setItem('token', response?.data?.data?.token);
+    return response?.data;
   }
 );
 
@@ -57,13 +58,13 @@ export const registerUser = createAsyncThunk(
     const response = await apiPost('/auth/signup', userData);
 
     if (response.status === 400) {
-      throw new Error(response.data.message);
+      throw new Error(response?.data?.message);
     }
     
     if (response.status !== 201 && response.status !== 200) {
-      throw new Error('Registration failed');
+      throw new Error(response?.data?.message || 'Registration failed');
     }
-    return response.data;
+    return response?.data;
   }
 );
 
@@ -73,9 +74,9 @@ export const fetchCurrentUser = createAsyncThunk(
     const response = await apiGet('/auth/me');
 
     if (response.status !== 200) {
-      throw new Error(response.data.message || 'Failed to fetch current user');
+      throw new Error(response?.data?.message || 'Failed to fetch current user');
     }
-    return response.data;
+    return response?.data;
   }
 );
 
