@@ -32,7 +32,7 @@ export const fetchTasks = createAsyncThunk("tasks/fetchTasks", async () => {
     throw new Error(response.data.message || "Failed to fetch tasks");
   }
 
-  return response.data;
+  return response?.data?.data;
 });
 
 const tasksSlice = createSlice({
@@ -47,7 +47,6 @@ const tasksSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Fetch tasks
       .addCase(fetchTasks.pending, (state) => {
         state.loading = true;
         state.error = null;

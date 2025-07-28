@@ -9,11 +9,29 @@ const TaskList = ({
   todoList: any[];
   onClick: (item: any) => void;
 }) => {
+  
+  // Map heading to API status values
+  const getStatusFromHeading = (heading: string) => {
+    switch (heading.toLowerCase()) {
+      case 'todo':
+        return 'pending';
+      case 'in-progress':
+        return 'in_progress';
+      case 'completed':
+        return 'completed';
+      default:
+        return 'pending';
+    }
+  };
+
+  // Filter tasks by status
+  const filteredTasks = todoList.filter(task => task.status === getStatusFromHeading(heading));
+  
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
-      case 'todo':
+      case 'pending':
         return 'border-l-4 border-l-orange-400 bg-orange-50';
-      case 'in-progress':
+      case 'in_progress':
         return 'border-l-4 border-l-blue-400 bg-blue-50';
       case 'completed':
         return 'border-l-4 border-l-green-400 bg-green-50';
@@ -24,9 +42,9 @@ const TaskList = ({
 
   const getStatusBadge = (status: string) => {
     switch (status.toLowerCase()) {
-      case 'todo':
+      case 'pending':
         return 'bg-orange-100 text-orange-700 border-orange-200';
-      case 'in-progress':
+      case 'in_progress':
         return 'bg-blue-100 text-blue-700 border-blue-200';
       case 'completed':
         return 'bg-green-100 text-green-700 border-green-200';
@@ -49,17 +67,17 @@ const TaskList = ({
             {heading}
           </Text>
           <div className="bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs font-medium">
-            {todoList?.length || 0}
+            {filteredTasks?.length || 0}
           </div>
         </div>
       </div>
 
       {/* Task List */}
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
-        {todoList && todoList.length > 0 ? (
-          todoList.map((item, index) => (
+        {filteredTasks && filteredTasks.length > 0 ? (
+          filteredTasks.map((item, index) => (
             <div
-              className={`w-full p-4 rounded-lg cursor-pointer transition-all duration-200 hover:shadow-md hover:scale-[1.02] ${getStatusColor(heading)}`}
+              className={`w-full p-4 rounded-lg cursor-pointer transition-all duration-200 hover:shadow-md hover:scale-[1.02] ${getStatusColor(item.status)}`}
               key={item.id}
               onClick={() => onClick(item)}
               style={{
@@ -74,8 +92,10 @@ const TaskList = ({
                 <Text variant="h4" weight="semibold" className="text-gray-800 line-clamp-2">
                   {item.title}
                 </Text>
-                <div className={`px-2 py-1 rounded-full text-xs font-medium border ${getStatusBadge(heading)}`}>
-                  {heading}
+                <div className={`px-2 py-1 rounded-full text-xs font-medium border ${getStatusBadge(item.status)}`}>
+                  {item.status === 'pending' ? 'TODO' : 
+                   item.status === 'in_progress' ? 'In Progress' : 
+                   item.status === 'completed' ? 'Completed' : item.status}
                 </div>
               </div>
 
@@ -91,7 +111,7 @@ const TaskList = ({
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
                   <span className="font-medium">Created by:</span>
-                  <span>{item.createdBy}</span>
+                  <span>{item.owner?.firstName} {item.owner?.lastName}</span>
                 </div>
                 
                 <div className="flex items-center gap-2 text-sm text-gray-500">
@@ -99,12 +119,12 @@ const TaskList = ({
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
                   </svg>
                   <span className="font-medium">Assigned to:</span>
-                  <span>{item.assignedTo}</span>
+                  <span>{item.assignedTo?.firstName} {item.assignedTo?.lastName}</span>
                 </div>
 
                 <div className="flex items-center gap-2 text-sm text-gray-500">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 002 2z" />
                   </svg>
                   <span className="font-medium">Created:</span>
                   <span>{new Date(item.createdAt).toLocaleDateString()}</span>
