@@ -77,7 +77,7 @@ export const fetchCurrentUser = createAsyncThunk(
     if (response.status !== 200) {
       throw new Error(response?.data?.message || 'Failed to fetch current user');
     }
-    return response?.data?.data?.user;
+    return response?.data?.data;
   }
 );
 

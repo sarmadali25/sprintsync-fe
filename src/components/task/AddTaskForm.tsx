@@ -2,24 +2,30 @@ import React, { useState } from "react";
 import { X } from "lucide-react";
 import { FormInput, FormButton } from "../form";
 import Text from "../text/Text";
+import { useAppSelector } from "../../store/hooks";
 
 interface TaskFormData {
   title: string;
   description: string;
-  assignedTo: string;
+  assignedToId: string;
+  ownerId: string;
 }
 
 interface AddTaskFormProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (task: TaskFormData) => void;
+  loading: boolean;
 }
 
-const AddTaskForm: React.FC<AddTaskFormProps> = ({ isOpen, onClose, onSubmit }) => {
+const AddTaskForm: React.FC<AddTaskFormProps> = ({ isOpen, onClose, onSubmit, loading }) => {
+  const { user } = useAppSelector((state) => state.user);
+  
   const [formData, setFormData] = useState<TaskFormData>({
     title: "",
     description: "",
-    assignedTo: "",
+    assignedToId: user?.data?.id || "",
+    ownerId: user?.data?.id || "",
   });
   const [errors, setErrors] = useState<Partial<TaskFormData>>({});
   const [isLoading, setIsLoading] = useState(false);
@@ -46,12 +52,24 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ isOpen, onClose, onSubmit }) 
       newErrors.title = "Title is required";
     }
 
+    if (formData.title.length < 5) {
+      newErrors.title = "Title must be at least 5 characters long";
+    }
+
     if (!formData.description.trim()) {
       newErrors.description = "Description is required";
     }
 
-    if (!formData.assignedTo.trim()) {
-      newErrors.assignedTo = "Assignee is required";
+    if (formData.description.length < 50) {
+      newErrors.description = "Description must be at least 50 characters long";
+    }
+
+    if (!formData.assignedToId.trim()) {
+      newErrors.assignedToId = "Assignee is required";
+    }
+
+    if (!formData.assignedToId.trim()) {
+      newErrors.assignedToId = "Assignee is required";
     }
 
     setErrors(newErrors);
@@ -72,10 +90,10 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ isOpen, onClose, onSubmit }) 
       setFormData({
         title: "",
         description: "",
-        assignedTo: "",
+        assignedToId: "",
+        ownerId: user?.data?.id || "",
       });
       setErrors({});
-      onClose();
     } catch (error) {
       console.error("Error submitting task:", error);
     } finally {
@@ -87,7 +105,8 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ isOpen, onClose, onSubmit }) 
     setFormData({
       title: "",
       description: "",
-      assignedTo: "",
+      assignedToId: "",
+      ownerId: user?.data?.id || "",
     });
     setErrors({});
     onClose();
@@ -140,14 +159,14 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ isOpen, onClose, onSubmit }) 
           />
 
           <FormInput
-            id="assignedTo"
-            name="assignedTo"
+            id="assignedToId"
+            name="assignedToId"
             label="Assigned To"
             type="text"
-            value={formData.assignedTo}
+            value={formData.assignedToId}
             onChange={handleInputChange}
             placeholder="Enter assignee name"
-            error={errors.assignedTo}
+            error={errors.assignedToId}
             required
           />
 
@@ -165,8 +184,8 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ isOpen, onClose, onSubmit }) 
             
             <FormButton
               type="submit"
-              isLoading={isLoading}
-              disabled={isLoading}
+              isLoading={loading}
+              disabled={loading}
               loadingText="Creating..."
               className="flex-1"
             >

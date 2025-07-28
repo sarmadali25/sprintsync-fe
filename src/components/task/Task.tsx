@@ -4,7 +4,8 @@ import Text from "../text/Text"
 import TaskList from "./TaskList"
 import AddTaskForm from "./AddTaskForm"
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { fetchTasks } from "../../store/slices/tasksSlice";
+import { fetchTasks, createTask } from "../../store/slices/tasksSlice";
+import { showSuccessToast, showErrorToast } from "../../utils/toast";
 
 const Task = () => {
   const dispatch = useAppDispatch();
@@ -12,7 +13,7 @@ const Task = () => {
     dispatch(fetchTasks());
   }, [dispatch]);
 
-    const { tasks, loading, error } = useAppSelector((state) => state.tasks);
+    const { tasks, loading, error, createTaskLoading, createTaskError } = useAppSelector((state) => state.tasks);
   
   const [isFormOpen, setIsFormOpen] = useState(false);
 
@@ -40,11 +41,23 @@ const Task = () => {
   }
 
 
-    const handleCreateTask = async (taskData: any) => {
-      // TODO: post request
-      console.log("taskData", taskData);
+      const handleCreateTask = async (taskData: any) => {
+    try {
+      const result = await dispatch(createTask(taskData)).unwrap();
+      showSuccessToast({
+        title: 'Success!',
+        text: 'Task created successfully'
+      });
       
-    };
+      setIsFormOpen(false);
+    } catch (error) {
+      // Error toast
+      showErrorToast({
+        title: 'Error!',
+        text: (error as Error)?.message || 'Failed to create task'
+      });
+    }
+  };
 
     return (
       <>
@@ -78,6 +91,7 @@ const Task = () => {
           isOpen={isFormOpen}
           onClose={() => setIsFormOpen(false)}
           onSubmit={handleCreateTask}
+          loading={createTaskLoading}
         />
       </>
     )

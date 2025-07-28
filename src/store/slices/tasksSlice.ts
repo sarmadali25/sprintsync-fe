@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { apiGet, apiPost, apiPut, apiDelete } from "../../utils/api";
+import { apiGet, apiPost } from "../../utils/api";
 
 export interface TaskAttributes {
   id?: string;
@@ -16,12 +16,16 @@ interface TasksState {
   tasks: TaskAttributes[];
   loading: boolean;
   error: string | null;
+  createTaskLoading: boolean;
+  createTaskError: string | null;
 }
 
 const initialState: TasksState = {
   tasks: [],
   loading: false,
   error: null,
+  createTaskLoading: false,
+  createTaskError: null,
 };
 
 // Async thunks for API calls
@@ -34,6 +38,19 @@ export const fetchTasks = createAsyncThunk("tasks/fetchTasks", async () => {
 
   return response?.data?.data;
 });
+
+export const createTask = createAsyncThunk(
+  "tasks/createTask", 
+  async (taskData: Omit<TaskAttributes, 'id' | 'createdAt' | 'updatedAt'>) => {
+    const response = await apiPost("/task", taskData);
+    
+    if (response.status !== 201 && response.status !== 200) {
+      throw new Error(response.data.message || "Failed to create task");
+    }
+    
+    return response?.data?.data;
+  }
+);
 
 const tasksSlice = createSlice({
   name: "tasks",
@@ -58,6 +75,18 @@ const tasksSlice = createSlice({
       .addCase(fetchTasks.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || "Failed to fetch tasks";
+      })
+      .addCase(createTask.pending, (state) => {
+        state.createTaskLoading = true;
+        state.createTaskError = null;
+      })
+      .addCase(createTask.fulfilled, (state, action) => {
+        state.createTaskLoading = false;
+        state.tasks.push(action.payload);
+      })
+      .addCase(createTask.rejected, (state, action) => {
+        state.createTaskLoading = false;
+        state.createTaskError = action.error.message || "Failed to create task";
       });
   },
 });
