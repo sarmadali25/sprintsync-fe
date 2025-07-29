@@ -71,6 +71,7 @@ const tasksSlice = createSlice({
       .addCase(fetchTasks.fulfilled, (state, action) => {
         state.loading = false;
         state.tasks = action.payload;
+        state.error = null;
       })
       .addCase(fetchTasks.rejected, (state, action) => {
         state.loading = false;
@@ -80,9 +81,9 @@ const tasksSlice = createSlice({
         state.createTaskLoading = true;
         state.createTaskError = null;
       })
-      .addCase(createTask.fulfilled, (state, action) => {
+      .addCase(createTask.fulfilled, (state) => {
         state.createTaskLoading = false;
-        state.tasks.push(action.payload);
+        state.createTaskError = null;
       })
       .addCase(createTask.rejected, (state, action) => {
         state.createTaskLoading = false;

@@ -60,8 +60,8 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ isOpen, onClose, onSubmit, lo
       newErrors.description = "Description is required";
     }
 
-    if (formData.description.length < 50) {
-      newErrors.description = "Description must be at least 50 characters long";
+    if (formData.description.length < 10) {
+      newErrors.description = "Description must be at least 10 characters long";
     }
 
     if (!formData.assignedToId.trim()) {

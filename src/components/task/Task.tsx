@@ -21,7 +21,7 @@ const Task = () => {
 
   if (loading) {
     return (
-      <div className="md:max-w-[1600px] h-[calc(100vh_-_200px)] w-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 rounded-lg shadow-lg px-5 py-8 border-2 border-red-500">
+      <div className="md:max-w-[1600px] h-[calc(100vh_-_200px)] w-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 rounded-lg shadow-lg px-5 py-">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
           <Text variant="h4" className="mt-4 text-gray-600">
             Loading tasks...
@@ -65,7 +65,7 @@ const Task = () => {
         title: "Success!",
         text: "Task created successfully",
       });
-
+      await dispatch(fetchTasks());
       setIsFormOpen(false);
     } catch (error) {
       // Error toast
