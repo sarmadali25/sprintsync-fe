@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from "react";
 import { X } from "lucide-react";
-import { FormInput, FormButton } from "../form";
+import React, { useState, useEffect } from "react";
+
 import Text from "../text/Text";
-import { useAppSelector } from "../../store/hooks";
+import { FormInput, FormButton, FormSelect } from "../form";
+import { fetchUserList } from "../../store/slices/userSlice";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
 
 const TaskForm: React.FC<TaskFormProps> = ({
   isOpen,
@@ -12,29 +14,18 @@ const TaskForm: React.FC<TaskFormProps> = ({
   mode,
   initialData,
 }) => {
+  const dispatch = useAppDispatch();
+
   const { user } = useAppSelector((state) => state.user);
+  const { userList } = useAppSelector((state) => state.user);
 
   const [formData, setFormData] = useState<TaskFormData>({
     title: "",
     description: "",
-    assignedToId: user?.data?.id || "",
-    ownerId: user?.data?.id || "",
+    assignedToId: "",
+    ownerId: "",
   });
   const [errors, setErrors] = useState<Partial<TaskFormData>>({});
-
-  // Initialize form data when editing
-  useEffect(() => {
-    if (mode === "edit" && initialData) {
-      setFormData(initialData);
-    } else if (mode === "create") {
-      setFormData({
-        title: "",
-        description: "",
-        assignedToId: user?.data?.id || "",
-        ownerId: user?.data?.id || "",
-      });
-    }
-  }, [mode, initialData, user?.data?.id]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -44,7 +35,6 @@ const TaskForm: React.FC<TaskFormProps> = ({
       ...prev,
       [name]: value,
     }));
-    // Clear error when user starts typing
     if (errors[name as keyof TaskFormData]) {
       setErrors((prev) => ({
         ...prev,
@@ -52,6 +42,12 @@ const TaskForm: React.FC<TaskFormProps> = ({
       }));
     }
   };
+
+  const userOptions =
+    userList?.data?.map((user) => ({
+      value: user.id,
+      label: `${user.firstName} ${user.lastName}`,
+    })) || [];
 
   const validateForm = (): boolean => {
     const newErrors: Partial<TaskFormData> = {};
@@ -113,6 +109,23 @@ const TaskForm: React.FC<TaskFormProps> = ({
     onClose();
   };
 
+  useEffect(() => {
+    if (mode === "edit" && initialData) {
+      setFormData(initialData);
+    } else if (mode === "create") {
+      setFormData({
+        title: "",
+        description: "",
+        assignedToId: "",
+        ownerId: user?.data?.id || "",
+      });
+    }
+  }, [mode, initialData, user?.data?.id]);
+
+  useEffect(() => {
+    dispatch(fetchUserList());
+  }, []);
+
   if (!isOpen) return null;
 
   return (
@@ -159,16 +172,16 @@ const TaskForm: React.FC<TaskFormProps> = ({
             rows={4}
           />
 
-          <FormInput
+          <FormSelect
             id="assignedToId"
             name="assignedToId"
             label="Assigned To"
-            type="text"
             value={formData.assignedToId}
             onChange={handleInputChange}
-            placeholder="Enter assignee name"
+            placeholder="Select assignee"
             error={errors.assignedToId}
             required
+            options={userOptions}
           />
 
           {/* Action Buttons */}
