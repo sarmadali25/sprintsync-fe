@@ -12,6 +12,7 @@ import {
   createTask,
   updateTask,
   deleteTask,
+  updateTaskStatus,
 } from "../../store/slices/tasksSlice";
 
 const Task = () => {
@@ -81,6 +82,25 @@ const Task = () => {
       showErrorToast({
         title: "Error!",
         text: (error as Error)?.message || "Failed to delete task",
+      });
+    }
+  };
+
+  const handleMoveToNext = async (task: any) => {
+    try {
+      const nextStatus = task.status === "pending" ? "in_progress" : "completed";
+      
+      await dispatch(updateTaskStatus({ taskId: task.id, status: nextStatus })).unwrap();
+      await dispatch(fetchTasks())
+      showSuccessToast({
+        title: "Success!",
+        text: `Task moved to ${nextStatus === "in_progress" ? "In Progress" : "Completed"}`,
+      });
+      await dispatch(fetchTasks());
+    } catch (error) {
+      showErrorToast({
+        title: "Error!",
+        text: (error as Error)?.message || "Failed to move task",
       });
     }
   };
@@ -165,6 +185,7 @@ const Task = () => {
             onClick={() => {}}
             onEdit={handleEditModalOpen}
             onDelete={handleDeleteModalOpen}
+            onMoveToNext={handleMoveToNext}
           />
           <TaskList
             heading="In-Progress"
@@ -172,6 +193,7 @@ const Task = () => {
             onClick={() => {}}
             onEdit={handleEditModalOpen}
             onDelete={handleDeleteModalOpen}
+            onMoveToNext={handleMoveToNext}
           />
           <TaskList
             heading="Completed"

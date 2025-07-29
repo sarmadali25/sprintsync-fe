@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { MoreVert, Edit, Delete } from "@mui/icons-material";
+import { MoreVert, Edit, Delete, ArrowForward } from "@mui/icons-material";
 import {
   IconButton,
   Menu,
@@ -15,12 +15,14 @@ const TaskList = ({
   onClick,
   onEdit,
   onDelete,
+  onMoveToNext,
 }: {
   heading: string;
   todoList: any[];
   onClick: (item: any) => void;
   onEdit?: (task: any) => void;
   onDelete?: (task: any) => void;
+  onMoveToNext?: (task: any) => void;
 }) => {
   // Map heading to API status values
   const getStatusFromHeading = (heading: string) => {
@@ -33,6 +35,18 @@ const TaskList = ({
         return "completed";
       default:
         return "pending";
+    }
+  };
+
+  // Get next status for the current heading
+  const getNextStatus = (heading: string) => {
+    switch (heading.toLowerCase()) {
+      case "todo":
+        return "in_progress";
+      case "in-progress":
+        return "completed";
+      default:
+        return null;
     }
   };
 
@@ -94,6 +108,15 @@ const TaskList = ({
     }
     handleMenuClose();
   };
+
+  const handleMoveToNext = (task: any) => {
+    if (onMoveToNext) {
+      onMoveToNext(task);
+    }
+  };
+
+  const nextStatus = getNextStatus(heading);
+  const canMoveToNext = nextStatus !== null;
 
   return (
     <div className="w-full flex flex-col bg-white rounded-xl shadow-sm border border-gray-100 min-h-[70vh] max-h-[70vh] overflow-hidden">
@@ -237,6 +260,30 @@ const TaskList = ({
                   <span>{new Date(item.createdAt).toLocaleDateString()}</span>
                 </div>
               </div>
+
+              {/* Move to Next Button */}
+              {canMoveToNext && (
+                <div className="mt-4 pt-3 border-t border-gray-200">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleMoveToNext(item);
+                    }}
+                    className={`w-full flex items-center justify-center gap-2 px-3 py-2 text-white text-sm font-medium rounded-lg transition-all duration-200 hover:shadow-md hover:scale-[1.02] ${
+                      heading.toLowerCase() === "todo"
+                        ? "bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700"
+                        : heading.toLowerCase() === "in-progress"
+                        ? "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
+                        : "bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700"
+                    }`}
+                  >
+                    <ArrowForward fontSize="small" />
+                    <span>
+                      Move to {nextStatus === "in_progress" ? "In Progress" : "Completed"}
+                    </span>
+                  </button>
+                </div>
+              )}
             </div>
           ))
         ) : (

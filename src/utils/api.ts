@@ -1,5 +1,3 @@
-import axios, { type AxiosRequestConfig, type AxiosResponse } from 'axios';
-
 interface ApiRequestOptions {
   endpoint: string;
   body?: any;
@@ -14,36 +12,19 @@ interface ApiResponse<T = any> {
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api/v1';
 
-// Create axios instance with default configuration
-const apiClient = axios.create({
-  baseURL: API_BASE_URL,
-  headers: {
+// Helper function to get auth headers
+const getAuthHeaders = () => {
+  const token = localStorage.getItem('token');
+  const headers: Record<string, string> = {
     'Content-Type': 'application/json',
-  },
-});
-
-// Add request interceptor to include auth token
-apiClient.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
+  };
+  
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
   }
-);
-
-// Add response interceptor for error handling
-apiClient.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    console.error('API request failed:', error);
-    return Promise.reject(error);
-  }
-);
+  
+  return headers;
+};
 
 export const apiRequest = async <T = any>({
   endpoint,
@@ -58,28 +39,31 @@ export const apiRequest = async <T = any>({
       url = url.endsWith('/') ? `${url}${paramId}` : `${url}/${paramId}`;
     }
 
+    const fullUrl = `${API_BASE_URL}${url}`;
+
     // Prepare request configuration
-    const config: AxiosRequestConfig = {
+    const config: RequestInit = {
       method: reqType,
-      url,
+      headers: getAuthHeaders(),
     };
 
-    // Add data for non-GET requests
-    if (reqType !== 'GET' && body) {
-      config.data = body;
+    // Add body for non-GET requests
+    if ((reqType !== 'GET' && reqType !== 'DELETE') && body) {
+      config.body = JSON.stringify(body);
     }
 
     // Make the request
-    const response: AxiosResponse<T> = await apiClient(config);
+    const response = await fetch(fullUrl, config);
+    const responseData = await response.json();
 
     return {
-      data: response.data,
+      data: responseData,
       status: response.status,
     };
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('API request failed:', error);
-    throw new Error(`API request failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    throw error;
   }
 };
 
