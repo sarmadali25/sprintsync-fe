@@ -8,6 +8,7 @@ import {
   ListItemText,
 } from "@mui/material";
 import Text from "../text/Text";
+import TaskDetailModal from "./TaskDetailModal";
 
 const TaskList = ({
   heading,
@@ -78,6 +79,8 @@ const TaskList = ({
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedTask, setSelectedTask] = useState<any>(null);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [selectedTaskForDetail, setSelectedTaskForDetail] = useState<any>(null);
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>, task: any) => {
     event.stopPropagation();
@@ -108,6 +111,16 @@ const TaskList = ({
     if (onMoveToNext) {
       onMoveToNext(task);
     }
+  };
+
+  const handleTaskClick = (task: any) => {
+    setSelectedTaskForDetail(task);
+    setIsDetailModalOpen(true);
+  };
+
+  const handleDetailModalClose = () => {
+    setIsDetailModalOpen(false);
+    setSelectedTaskForDetail(null);
   };
 
   const nextStatus = getNextStatus(heading);
@@ -147,7 +160,7 @@ const TaskList = ({
                 item.status
               )}`}
               key={item.id}
-              onClick={() => onClick(item)}
+              onClick={() => handleTaskClick(item)}
               style={{
                 animationDelay: `${index * 100}ms`,
                 animation: "slide-up-fade 0.6s ease-out forwards",
@@ -335,6 +348,13 @@ const TaskList = ({
           <ListItemText primary="Delete Task" className="text-gray-700" />
         </MenuItem>
       </Menu>
+
+      {/* Task Detail Modal */}
+      <TaskDetailModal
+        isOpen={isDetailModalOpen}
+        onClose={handleDetailModalClose}
+        task={selectedTaskForDetail}
+      />
     </div>
   );
 };

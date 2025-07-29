@@ -66,3 +66,9 @@ interface TaskListProps {
   isAdmin: boolean;
   userId: string;
 }
+
+interface TaskDetailModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  task: any;
+}
