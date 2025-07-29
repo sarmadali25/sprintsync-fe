@@ -23,6 +23,11 @@ interface UserState {
     error: string | null;
     data: UserAttributes | null;
   }
+  userList:{
+    loading: boolean;
+    error: string | null;
+    data: UserAttributes[] | null;
+  }
 }
 
 const initialState: UserState = {
@@ -32,6 +37,11 @@ const initialState: UserState = {
     data : null
   },
   registerUser: {
+    loading: false,
+    error: null,
+    data: null
+  },
+  userList:{
     loading: false,
     error: null,
     data: null
@@ -66,6 +76,18 @@ export const registerUser = createAsyncThunk(
       throw new Error(response?.data?.message || 'Registration failed');
     }
     return response?.data?.data?.user;
+  }
+);
+
+export const fetchUserList = createAsyncThunk(
+  'user/fetchUserList',
+  async () => {
+    const response = await apiGet('/auth/all');
+
+    if (response.status !== 200) {
+      throw new Error(response?.data?.message || 'Failed to fetch user list');
+    }
+    return response?.data?.data;
   }
 );
 
@@ -145,6 +167,20 @@ const userSlice = createSlice({
       .addCase(fetchCurrentUser.rejected, (state, action) => {
         state.user.loading = false;
         state.user.error = action.error.message || 'Failed to fetch current user';
+      })
+      // Fetch user list
+      .addCase(fetchUserList.pending, (state) => {
+        state.userList.loading = true;
+        state.userList.error = null;
+      })
+      .addCase(fetchUserList.fulfilled, (state, action) => {  
+        state.userList.loading = false;
+        state.userList.data = action.payload;
+        state.userList.error = null;
+      })
+      .addCase(fetchUserList.rejected, (state, action) => {
+        state.userList.loading = false; 
+        state.userList.error = action.error.message || 'Failed to fetch user list';
       })
   },
 });
