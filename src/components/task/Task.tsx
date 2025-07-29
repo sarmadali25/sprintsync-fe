@@ -1,35 +1,50 @@
 import { useEffect, useState } from "react";
-import Button from "../button/Button";
+
 import Text from "../text/Text";
 import TaskList from "./TaskList";
 import TaskForm from "./TaskForm";
+import Button from "../button/Button";
 import DeleteConfirmation from "./DeleteConfirmation";
+import { fetchUserList } from "../../store/slices/userSlice";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { fetchTasks, createTask, updateTask, deleteTask } from "../../store/slices/tasksSlice";
 import { showSuccessToast, showErrorToast } from "../../utils/toast";
+import {
+  fetchTasks,
+  createTask,
+  updateTask,
+  deleteTask,
+} from "../../store/slices/tasksSlice";
 
 const Task = () => {
   const dispatch = useAppDispatch();
-  useEffect(() => {
-    dispatch(fetchTasks());
-  }, [dispatch]);
-
-  const { tasks, loading, error, createTaskLoading, updateTaskLoading, deleteTaskLoading } = useAppSelector(
-    (state) => state.tasks
-  );
 
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<any>(null);
 
+  const {
+    tasks,
+    loading,
+    error,
+    createTaskLoading,
+    updateTaskLoading,
+    deleteTaskLoading,
+  } = useAppSelector((state) => state.tasks);
+
+
+  useEffect(() => {
+    dispatch(fetchTasks());
+    dispatch(fetchUserList());
+  }, []);
+
   if (loading) {
     return (
       <div className="md:max-w-[1600px] h-[calc(100vh_-_200px)] w-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 rounded-lg shadow-lg px-5 py-">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-          <Text variant="h4" className="mt-4 text-gray-600">
-            Loading tasks...
-          </Text>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        <Text variant="h4" className="mt-4 text-gray-600">
+          Loading tasks...
+        </Text>
       </div>
     );
   }
@@ -98,7 +113,6 @@ const Task = () => {
   };
 
   const handleDeleteTask = async (taskId: string) => {
-    
     try {
       await dispatch(deleteTask(taskId)).unwrap();
       showSuccessToast({
@@ -146,10 +160,10 @@ const Task = () => {
 
         {/* Boards */}
         <div className="w-full grid grid-cols-1 md:grid-cols-3 mb-3 gap-2 ">
-          <TaskList 
-            heading="TODO" 
-            todoList={tasks || []} 
-            onClick={() => {}} 
+          <TaskList
+            heading="TODO"
+            todoList={tasks || []}
+            onClick={() => {}}
             onEdit={handleEditModalOpen}
             onDelete={handleDeleteModalOpen}
           />
