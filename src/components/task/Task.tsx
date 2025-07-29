@@ -4,7 +4,7 @@ import Text from "../text/Text";
 import TaskList from "./TaskList";
 import TaskForm from "./TaskForm";
 import Button from "../button/Button";
-import DeleteConfirmation from "./DeleteConfirmation";
+import DeleteConfirmation from "./TaskDelete";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { showSuccessToast, showErrorToast } from "../../utils/toast";
 import {
