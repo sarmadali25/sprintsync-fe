@@ -1,10 +1,12 @@
-import { X } from "lucide-react";
+import { Loader2, X } from "lucide-react";
 import React, { useState, useEffect } from "react";
 
 import Text from "../text/Text";
+import { showErrorToast } from "../../utils/toast";
 import { FormInput, FormButton, FormSelect } from "../form";
 import { fetchUserList } from "../../store/slices/userSlice";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { generateAIDescription } from "../../store/slices/tasksSlice";
 
 const TaskForm: React.FC<TaskFormProps> = ({
   isOpen,
@@ -16,6 +18,7 @@ const TaskForm: React.FC<TaskFormProps> = ({
 }) => {
   const dispatch = useAppDispatch();
 
+  const { generateAIDescriptionLoading } = useAppSelector((state) => state.tasks);
   const { user } = useAppSelector((state) => state.user);
   const isAdmin = user?.data?.isAdmin;
   
@@ -111,6 +114,22 @@ const TaskForm: React.FC<TaskFormProps> = ({
     onClose();
   };
 
+  const handleGenerateDescription = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    try{
+      const response = await dispatch(generateAIDescription({ title: formData.title })).unwrap();
+      setFormData((prev) => ({
+        ...prev,
+        description: response,
+      }));
+    } catch (error) {
+      showErrorToast({
+        title: "Error!",
+        text: (error as Error)?.message || "Failed to generate AI description",
+      });
+    }
+  }
+
   useEffect(() => {
     if (mode === "edit" && initialData) {
       setFormData(initialData);
@@ -162,19 +181,36 @@ const TaskForm: React.FC<TaskFormProps> = ({
             required
           />
 
-          <FormInput
-            id="description"
-            name="description"
-            label="Description"
-            type="text"
-            value={formData.description}
-            onChange={handleInputChange}
-            placeholder="Enter task description"
-            error={errors.description}
-            required
-            textarea={true}
-            rows={4}
-          />
+          <div className="relative">
+            <FormInput
+              id="description"
+              name="description"
+              label="Description"
+              type="text"
+              value={formData.description}
+              onChange={handleInputChange}
+              placeholder="Enter task description"
+              error={errors.description}
+              required
+              textarea={true}
+              rows={4}
+            />
+            <button
+              type="button"
+              onClick={handleGenerateDescription}
+              disabled={!formData.title.trim() || generateAIDescriptionLoading}
+              className="absolute top-2 right-2 p-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              title="Generate description from title"
+            >
+              {generateAIDescriptionLoading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              )}
+            </button>
+          </div>
 
           <FormSelect
             id="assignedToId"
