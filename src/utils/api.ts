@@ -49,7 +49,6 @@ export const apiRequest = async <T = any>({
 
     // Make the request
     const response = await fetch(url, requestOptions);
-    console.log('response', response);
     
     
     // Parse response

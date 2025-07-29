@@ -98,7 +98,6 @@ const Task = () => {
   };
 
   const handleDeleteTask = async (taskId: string) => {
-    console.log("task id to delete",taskId);
     
     try {
       await dispatch(deleteTask(taskId)).unwrap();

@@ -20,7 +20,6 @@ const DeleteConfirmation: React.FC<DeleteConfirmationProps> = ({
   loading = false
 }) => {
   if (!isOpen) return null;
-  console.log("task id", taskId);
   
 
   return (

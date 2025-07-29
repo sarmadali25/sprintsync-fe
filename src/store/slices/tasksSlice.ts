@@ -78,7 +78,6 @@ export const deleteTask = createAsyncThunk(
   "tasks/deleteTask", 
   async (taskId: string) => {
     const response = await apiDelete(`/task/${taskId}`);
-    console.log("response",response);
     
     
     if (response.status !== 204) {
