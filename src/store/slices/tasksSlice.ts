@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { apiGet, apiPost } from "../../utils/api";
+import { apiGet, apiPost, apiPatch, apiDelete } from "../../utils/api";
 
 export interface TaskAttributes {
   id?: string;
@@ -18,6 +18,10 @@ interface TasksState {
   error: string | null;
   createTaskLoading: boolean;
   createTaskError: string | null;
+  updateTaskLoading: boolean;
+  updateTaskError: string | null;
+  deleteTaskLoading: boolean;
+  deleteTaskError: string | null;
 }
 
 const initialState: TasksState = {
@@ -26,6 +30,10 @@ const initialState: TasksState = {
   error: null,
   createTaskLoading: false,
   createTaskError: null,
+  updateTaskLoading: false,
+  updateTaskError: null,
+  deleteTaskLoading: false,
+  deleteTaskError: null,
 };
 
 // Async thunks for API calls
@@ -49,6 +57,35 @@ export const createTask = createAsyncThunk(
     }
     
     return response?.data?.data;
+  }
+);
+
+export const updateTask = createAsyncThunk(
+  "tasks/updateTask", 
+  async (taskData: TaskAttributes) => {
+    const {id, ...rest} = taskData;
+    const response = await apiPatch(`/task/${taskData.id}`, rest);
+    
+    if (response.status !== 200) {
+      throw new Error(response.data.message || "Failed to update task");
+    }
+    
+    return response?.data?.data;
+  }
+);
+
+export const deleteTask = createAsyncThunk(
+  "tasks/deleteTask", 
+  async (taskId: string) => {
+    const response = await apiDelete(`/task/${taskId}`);
+    console.log("response",response);
+    
+    
+    if (response.status !== 204) {
+      throw new Error(response.data.message || "Failed to delete task");
+    }
+    
+    return taskId;
   }
 );
 
@@ -88,6 +125,37 @@ const tasksSlice = createSlice({
       .addCase(createTask.rejected, (state, action) => {
         state.createTaskLoading = false;
         state.createTaskError = action.error.message || "Failed to create task";
+      })
+      .addCase(updateTask.pending, (state) => {
+        state.updateTaskLoading = true;
+        state.updateTaskError = null;
+      })
+      .addCase(updateTask.fulfilled, (state, action) => {
+        state.updateTaskLoading = false;
+        state.updateTaskError = null;
+        // Update the task in the state
+        const index = state.tasks.findIndex(task => task.id === action.payload.id);
+        if (index !== -1) {
+          state.tasks[index] = action.payload;
+        }
+      })
+      .addCase(updateTask.rejected, (state, action) => {
+        state.updateTaskLoading = false;
+        state.updateTaskError = action.error.message || "Failed to update task";
+      })
+      .addCase(deleteTask.pending, (state) => {
+        state.deleteTaskLoading = true;
+        state.deleteTaskError = null;
+      })
+      .addCase(deleteTask.fulfilled, (state, action) => {
+        state.deleteTaskLoading = false;
+        state.deleteTaskError = null;
+        // Remove the task from the state
+        state.tasks = state.tasks.filter(task => task.id !== action.payload);
+      })
+      .addCase(deleteTask.rejected, (state, action) => {
+        state.deleteTaskLoading = false;
+        state.deleteTaskError = action.error.message || "Failed to delete task";
       });
   },
 });
