@@ -19,6 +19,8 @@ interface TasksState {
   updateTaskError: string | null;
   deleteTaskLoading: boolean;
   deleteTaskError: string | null;
+  generateAIDescriptionLoading: boolean;
+  generateAIDescriptionError: string | null;
 }
 
 interface TaskFormData {

@@ -11,6 +11,8 @@ const initialState: TasksState = {
   updateTaskError: null,
   deleteTaskLoading: false,
   deleteTaskError: null,
+  generateAIDescriptionLoading: false,
+  generateAIDescriptionError: null,
 };
 
 // Async thunks for API calls
@@ -77,6 +79,17 @@ export const updateTaskStatus = createAsyncThunk(
   }
 );
 
+export const generateAIDescription = createAsyncThunk(
+    "tasks/generateAIDescription", 
+  async ({ title }: { title: string }) => {
+    const response = await apiPost(`/task/description-suggesstion`, {title});
+    if (response.status !== 200) {
+      throw new Error(response.data.message || "Failed to generate AI description");
+    }
+    
+    return response?.data?.data;
+  }
+);
 const tasksSlice = createSlice({
   name: "tasks",
   initialState,
@@ -143,6 +156,19 @@ const tasksSlice = createSlice({
       .addCase(deleteTask.rejected, (state, action) => {
         state.deleteTaskLoading = false;
         state.deleteTaskError = action.error.message || "Failed to delete task";
+      })
+      // Generate AI Description
+      .addCase(generateAIDescription.pending, (state) => {
+        state.generateAIDescriptionLoading = true;
+        state.generateAIDescriptionError = null;
+      })
+      .addCase(generateAIDescription.fulfilled, (state, ) => {
+        state.generateAIDescriptionLoading = false;
+        state.generateAIDescriptionError = null;
+      })
+      .addCase(generateAIDescription.rejected, (state, action) => {
+        state.generateAIDescriptionLoading = false;
+        state.generateAIDescriptionError = action.error.message || "Failed to generate AI description";
       });
   },
 });
