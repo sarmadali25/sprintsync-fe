@@ -30,6 +30,70 @@ const Task = () => {
     updateTaskLoading,
     deleteTaskLoading,
   } = useAppSelector((state) => state.tasks);
+  
+
+  const handleCreateTask = async (taskData: any) => {
+    try {
+      await dispatch(createTask(taskData)).unwrap();
+      showSuccessToast({
+        title: "Success!",
+        text: "Task created successfully",
+      });
+      await dispatch(fetchTasks());
+      setIsFormOpen(false);
+    } catch (error) {
+      // Error toast
+      showErrorToast({
+        title: "Error!",
+        text: (error as Error)?.message || "Failed to create task",
+      });
+    }
+  };
+
+  const handleEditTask = async (taskData: any) => {
+    try {
+      await dispatch(updateTask(taskData)).unwrap();
+      showSuccessToast({
+        title: "Success!",
+        text: "Task updated successfully",
+      });
+      setIsEditModalOpen(false);
+      setSelectedTask(null);
+      dispatch(fetchTasks());
+    } catch (error) {
+      showErrorToast({
+        title: "Error!",
+        text: (error as Error)?.message || "Failed to update task",
+      });
+    }
+  };
+
+  const handleDeleteTask = async (taskId: string) => {
+    try {
+      await dispatch(deleteTask(taskId)).unwrap();
+      showSuccessToast({
+        title: "Success!",
+        text: "Task deleted successfully",
+      });
+      setIsDeleteModalOpen(false);
+      setSelectedTask(null);
+    } catch (error) {
+      showErrorToast({
+        title: "Error!",
+        text: (error as Error)?.message || "Failed to delete task",
+      });
+    }
+  };
+
+  const handleEditModalOpen = (task: any) => {
+    setSelectedTask(task);
+    setIsEditModalOpen(true);
+  };
+
+  const handleDeleteModalOpen = (task: any) => {
+    setSelectedTask(task);
+    setIsDeleteModalOpen(true);
+  };
 
   useEffect(() => {
     dispatch(fetchTasks());
@@ -73,68 +137,6 @@ const Task = () => {
       </div>
     );
   }
-
-  const handleCreateTask = async (taskData: any) => {
-    try {
-      await dispatch(createTask(taskData)).unwrap();
-      showSuccessToast({
-        title: "Success!",
-        text: "Task created successfully",
-      });
-      await dispatch(fetchTasks());
-      setIsFormOpen(false);
-    } catch (error) {
-      // Error toast
-      showErrorToast({
-        title: "Error!",
-        text: (error as Error)?.message || "Failed to create task",
-      });
-    }
-  };
-
-  const handleEditTask = async (taskData: any) => {
-    try {
-      await dispatch(updateTask(taskData)).unwrap();
-      showSuccessToast({
-        title: "Success!",
-        text: "Task updated successfully",
-      });
-      setIsEditModalOpen(false);
-      setSelectedTask(null);
-    } catch (error) {
-      showErrorToast({
-        title: "Error!",
-        text: (error as Error)?.message || "Failed to update task",
-      });
-    }
-  };
-
-  const handleDeleteTask = async (taskId: string) => {
-    try {
-      await dispatch(deleteTask(taskId)).unwrap();
-      showSuccessToast({
-        title: "Success!",
-        text: "Task deleted successfully",
-      });
-      setIsDeleteModalOpen(false);
-      setSelectedTask(null);
-    } catch (error) {
-      showErrorToast({
-        title: "Error!",
-        text: (error as Error)?.message || "Failed to delete task",
-      });
-    }
-  };
-
-  const handleEditModalOpen = (task: any) => {
-    setSelectedTask(task);
-    setIsEditModalOpen(true);
-  };
-
-  const handleDeleteModalOpen = (task: any) => {
-    setSelectedTask(task);
-    setIsDeleteModalOpen(true);
-  };
 
   return (
     <>

@@ -77,6 +77,7 @@ const tasksSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+    // Fetch Tasks
       .addCase(fetchTasks.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -90,6 +91,7 @@ const tasksSlice = createSlice({
         state.loading = false;
         state.error = action.error.message || "Failed to fetch tasks";
       })
+      // Create Task
       .addCase(createTask.pending, (state) => {
         state.createTaskLoading = true;
         state.createTaskError = null;
@@ -102,28 +104,25 @@ const tasksSlice = createSlice({
         state.createTaskLoading = false;
         state.createTaskError = action.error.message || "Failed to create task";
       })
+      // Update Task
       .addCase(updateTask.pending, (state) => {
         state.updateTaskLoading = true;
         state.updateTaskError = null;
       })
-      .addCase(updateTask.fulfilled, (state, action) => {
+      .addCase(updateTask.fulfilled, (state) => {
         state.updateTaskLoading = false;
         state.updateTaskError = null;
-        // Update the task in the state
-        const index = state.tasks.findIndex(task => task.id === action.payload.id);
-        if (index !== -1) {
-          state.tasks[index] = action.payload;
-        }
       })
       .addCase(updateTask.rejected, (state, action) => {
         state.updateTaskLoading = false;
         state.updateTaskError = action.error.message || "Failed to update task";
       })
+      // Delete Task
       .addCase(deleteTask.pending, (state) => {
         state.deleteTaskLoading = true;
         state.deleteTaskError = null;
       })
-      .addCase(deleteTask.fulfilled, (state, action) => {
+      .addCase(deleteTask.fulfilled, (state,action) => {
         state.deleteTaskLoading = false;
         state.deleteTaskError = null;
         // Remove the task from the state
