@@ -17,6 +17,7 @@ const TaskList = ({
   onDelete,
   onMoveToNext,
   isAdmin,
+  userId,
 }: TaskListProps) => {
   // Map heading to API status values
   const getStatusFromHeading = (heading: string) => {
@@ -258,7 +259,7 @@ const TaskList = ({
               </div>
 
               {/* Move to Next Button */}
-              {canMoveToNext && (
+              {canMoveToNext && item?.assignedToId === userId && (
                 <div className="mt-4 pt-3 border-t border-gray-200">
                   <button
                     onClick={(e) => {

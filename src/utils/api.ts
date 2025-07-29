@@ -47,14 +47,22 @@ export const apiRequest = async <T = any>({
       headers: getAuthHeaders(),
     };
 
-    // Add body for non-GET requests
+    // Add body for non-GET and non-DELETE requests
     if ((reqType !== 'GET' && reqType !== 'DELETE') && body) {
       config.body = JSON.stringify(body);
     }
 
     // Make the request
     const response = await fetch(fullUrl, config);
-    const responseData = await response.json();
+    
+    // Handle empty responses (common with DELETE requests)
+    let responseData;
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      responseData = await response.json();
+    } else {
+      responseData = null;
+    }
 
     return {
       data: responseData,

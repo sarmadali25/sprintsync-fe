@@ -62,4 +62,5 @@ interface TaskListProps {
   onDelete?: (task: any) => void;
   onMoveToNext?: (task: any) => void;
   isAdmin: boolean;
+  userId: string;
 }

@@ -35,6 +35,7 @@ const Task = () => {
     user: { data: currentUser },
   } = useAppSelector((state) => state.user);
   const isAdmin = currentUser?.isAdmin;
+  const userId = currentUser?.id;
 
   const handleCreateTask = async (taskData: any) => {
     try {
@@ -192,6 +193,7 @@ const Task = () => {
           <TaskList
             heading="TODO"
             isAdmin={isAdmin || false}
+            userId={userId || ""}
             todoList={tasks || []}
             onClick={() => {}}
             onEdit={handleEditModalOpen}
@@ -201,6 +203,7 @@ const Task = () => {
           <TaskList
             heading="In-Progress"
             isAdmin={isAdmin || false}
+            userId={userId || ""}
             todoList={tasks || []}
             onClick={() => {}}
             onEdit={handleEditModalOpen}
@@ -210,6 +213,7 @@ const Task = () => {
           <TaskList
             heading="Completed"
             isAdmin={isAdmin || false}
+            userId={userId || ""}
             todoList={tasks || []}
             onClick={() => {}}
             onEdit={handleEditModalOpen}
