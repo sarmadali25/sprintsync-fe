@@ -13,8 +13,8 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (token && !currentUser?.id) {
-      dispatch(fetchCurrentUser());
+    if (token && !currentUser) {
+      dispatch(fetchCurrentUser())
     }
   }, [token, currentUser, dispatch]);
 
@@ -22,7 +22,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     return <div className="flex items-center justify-center h-screen">Loading...</div>;
   }
 
-  if (!token && !currentUser) {
+  if (!token || !currentUser) {
     return <Navigate to="/login" replace />;
   }
 
@@ -59,6 +59,8 @@ const AppRouter = () => {
             }
           />
         ))}
+        {/* Default route redirects to /task */}
+        <Route path="/" element={<Navigate to="/task" replace />} />
         {/* TODO: Add 404 page */}
         <Route path="*" element={<>Page Not Found</>} />
       </Routes>
