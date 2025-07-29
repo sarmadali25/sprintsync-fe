@@ -1,3 +1,5 @@
+import axios, { type AxiosRequestConfig, type AxiosResponse } from 'axios';
+
 interface ApiRequestOptions {
   endpoint: string;
   body?: any;
@@ -12,6 +14,37 @@ interface ApiResponse<T = any> {
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api/v1';
 
+// Create axios instance with default configuration
+const apiClient = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+// Add request interceptor to include auth token
+apiClient.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Add response interceptor for error handling
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    console.error('API request failed:', error);
+    return Promise.reject(error);
+  }
+);
+
 export const apiRequest = async <T = any>({
   endpoint,
   body,
@@ -20,49 +53,27 @@ export const apiRequest = async <T = any>({
 }: ApiRequestOptions): Promise<ApiResponse<T>> => {
   try {
     // Construct the full URL
-    let url = `${API_BASE_URL}${endpoint}`;
+    let url = endpoint;
     if (paramId) {
       url = url.endsWith('/') ? `${url}${paramId}` : `${url}/${paramId}`;
     }
 
-    // Prepare headers
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-    };
-
-    // Add token from localStorage if available
-    const token = localStorage.getItem('token');
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-
-    // Prepare request options
-    const requestOptions: RequestInit = {
+    // Prepare request configuration
+    const config: AxiosRequestConfig = {
       method: reqType,
-      headers,
+      url,
     };
 
-    // Add body for non-GET requests
+    // Add data for non-GET requests
     if (reqType !== 'GET' && body) {
-      requestOptions.body = JSON.stringify(body);
+      config.data = body;
     }
 
     // Make the request
-    const response = await fetch(url, requestOptions);
-    
-    
-    // Parse response
-    let data: T;
-    const contentType = response.headers.get('content-type');
-    
-    if (contentType && contentType.includes('application/json')) {
-      data = await response.json();
-    } else {
-      data = await response.text() as T;
-    }
+    const response: AxiosResponse<T> = await apiClient(config);
 
     return {
-      data,
+      data: response.data,
       status: response.status,
     };
 
