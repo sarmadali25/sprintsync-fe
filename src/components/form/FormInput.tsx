@@ -3,24 +3,6 @@ import { Eye, EyeOff } from "lucide-react";
 import { cn } from "../../utils";
 import Text from "../text/Text";
 
-interface FormInputProps {
-  id: string;
-  name: string;
-  label: string;
-  type?: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-  placeholder?: string;
-  error?: string;
-  icon?: React.ReactNode;
-  showPasswordToggle?: boolean;
-  showPassword?: boolean;
-  onTogglePassword?: () => void;
-  disabled?: boolean;
-  required?: boolean;
-  textarea?: boolean;
-  rows?: number;
-}
 
 const FormInput: React.FC<FormInputProps> = ({
   id,

@@ -2,14 +2,6 @@ import React from "react";
 import { X, AlertTriangle } from "lucide-react";
 import Text from "../text/Text";
 
-interface DeleteConfirmationProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onConfirm: (taskId: string) => void;
-  taskTitle: string;
-  taskId: any;
-  loading?: boolean;
-}
 
 const DeleteConfirmation: React.FC<DeleteConfirmationProps> = ({
   isOpen,

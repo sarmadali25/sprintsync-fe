@@ -2,9 +2,9 @@ interface FormInputProps {
   id: string;
   name: string;
   label: string;
-  type?: "text" | "email" | "password" | "tel";
+  type?: string;
   value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   placeholder?: string;
   error?: string;
   icon?: React.ReactNode;
@@ -13,8 +13,9 @@ interface FormInputProps {
   onTogglePassword?: () => void;
   disabled?: boolean;
   required?: boolean;
+  textarea?: boolean;
+  rows?: number;
 }
-
 interface FormButtonProps {
   type?: "submit" | "button";
   isLoading?: boolean;
@@ -32,4 +33,23 @@ interface AuthLayoutProps {
   footerText?: string;
   footerActionText?: string;
   onFooterAction?: () => void;
+}
+
+interface FormInputProps {
+  id: string;
+  name: string;
+  label: string;
+  type?: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  placeholder?: string;
+  error?: string;
+  icon?: React.ReactNode;
+  showPasswordToggle?: boolean;
+  showPassword?: boolean;
+  onTogglePassword?: () => void;
+  disabled?: boolean;
+  required?: boolean;
+  textarea?: boolean;
+  rows?: number;
 }

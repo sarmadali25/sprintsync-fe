@@ -1,29 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { apiGet, apiPost, apiPatch, apiDelete } from "../../utils/api";
 
-export interface TaskAttributes {
-  id?: string;
-  title: string;
-  description: string;
-  status: "pending" | "in_progress" | "completed";
-  assignedToId: number;
-  ownerId: number;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
-
-interface TasksState {
-  tasks: TaskAttributes[];
-  loading: boolean;
-  error: string | null;
-  createTaskLoading: boolean;
-  createTaskError: string | null;
-  updateTaskLoading: boolean;
-  updateTaskError: string | null;
-  deleteTaskLoading: boolean;
-  deleteTaskError: string | null;
-}
-
 const initialState: TasksState = {
   tasks: [],
   loading: false,

@@ -4,23 +4,6 @@ import { FormInput, FormButton } from "../form";
 import Text from "../text/Text";
 import { useAppSelector } from "../../store/hooks";
 
-interface TaskFormData {
-  id?: string;
-  title: string;
-  description: string;
-  assignedToId: string;
-  ownerId: string;
-}
-
-interface TaskFormProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSubmit: (task: TaskFormData) => void;
-  loading: boolean;
-  mode: "create" | "edit";
-  initialData?: TaskFormData;
-}
-
 const TaskForm: React.FC<TaskFormProps> = ({
   isOpen,
   onClose,

@@ -1,35 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { apiGet, apiPost } from '../../utils/api';
 
-export interface UserAttributes {
-  id: string;
-  email: string;
-  password: string;
-  firstName: string;
-  lastName: string;
-  phoneNumber: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
-
-interface UserState {
-  user: {
-    loading: boolean;
-    error: string | null;
-    data : UserAttributes | null;
-  }
-  registerUser: {
-    loading: boolean;
-    error: string | null;
-    data: UserAttributes | null;
-  }
-  userList:{
-    loading: boolean;
-    error: string | null;
-    data: UserAttributes[] | null;
-  }
-}
-
 const initialState: UserState = {
   user: {
     loading: false,
