@@ -36,5 +36,20 @@ interface TaskFormProps {
   loading: boolean;
   mode: "create" | "edit";
   initialData?: TaskFormData;
-  userList?: UserAttributes[];
+}
+
+interface FormSelectProps {
+  id: string;
+  name: string;
+  label: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  placeholder?: string;
+  error?: string;
+  disabled?: boolean;
+  required?: boolean;
+  options: Array<{
+    value: string;
+    label: string;
+  }>;
 }
