@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import Button from "../button/Button";
 import Text from "../text/Text";
 import TaskList from "./TaskList";
-import AddTaskForm from "./AddTaskForm";
+import TaskForm from "./TaskForm";
+import DeleteConfirmation from "./DeleteConfirmation";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { fetchTasks, createTask } from "../../store/slices/tasksSlice";
+import { fetchTasks, createTask, updateTask, deleteTask } from "../../store/slices/tasksSlice";
 import { showSuccessToast, showErrorToast } from "../../utils/toast";
 
 const Task = () => {
@@ -13,11 +14,14 @@ const Task = () => {
     dispatch(fetchTasks());
   }, [dispatch]);
 
-  const { tasks, loading, error, createTaskLoading } = useAppSelector(
+  const { tasks, loading, error, createTaskLoading, updateTaskLoading, deleteTaskLoading } = useAppSelector(
     (state) => state.tasks
   );
 
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<any>(null);
 
   if (loading) {
     return (
@@ -76,6 +80,52 @@ const Task = () => {
     }
   };
 
+  const handleEditTask = async (taskData: any) => {
+    try {
+      await dispatch(updateTask(taskData)).unwrap();
+      showSuccessToast({
+        title: "Success!",
+        text: "Task updated successfully",
+      });
+      setIsEditModalOpen(false);
+      setSelectedTask(null);
+    } catch (error) {
+      showErrorToast({
+        title: "Error!",
+        text: (error as Error)?.message || "Failed to update task",
+      });
+    }
+  };
+
+  const handleDeleteTask = async (taskId: string) => {
+    console.log("task id to delete",taskId);
+    
+    try {
+      await dispatch(deleteTask(taskId)).unwrap();
+      showSuccessToast({
+        title: "Success!",
+        text: "Task deleted successfully",
+      });
+      setIsDeleteModalOpen(false);
+      setSelectedTask(null);
+    } catch (error) {
+      showErrorToast({
+        title: "Error!",
+        text: (error as Error)?.message || "Failed to delete task",
+      });
+    }
+  };
+
+  const handleEditModalOpen = (task: any) => {
+    setSelectedTask(task);
+    setIsEditModalOpen(true);
+  };
+
+  const handleDeleteModalOpen = (task: any) => {
+    setSelectedTask(task);
+    setIsDeleteModalOpen(true);
+  };
+
   return (
     <>
       <div className="md:max-w-[1600px] w-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 rounded-lg shadow-lg px-5">
@@ -97,26 +147,76 @@ const Task = () => {
 
         {/* Boards */}
         <div className="w-full grid grid-cols-1 md:grid-cols-3 mb-3 gap-2 ">
-          <TaskList heading="TODO" todoList={tasks || []} onClick={() => {}} />
+          <TaskList 
+            heading="TODO" 
+            todoList={tasks || []} 
+            onClick={() => {}} 
+            onEdit={handleEditModalOpen}
+            onDelete={handleDeleteModalOpen}
+          />
           <TaskList
             heading="In-Progress"
             todoList={tasks || []}
             onClick={() => {}}
+            onEdit={handleEditModalOpen}
+            onDelete={handleDeleteModalOpen}
           />
           <TaskList
             heading="Completed"
             todoList={tasks || []}
             onClick={() => {}}
+            onEdit={handleEditModalOpen}
+            onDelete={handleDeleteModalOpen}
           />
         </div>
       </div>
 
       {/* Add Task Form Modal */}
-      <AddTaskForm
+      <TaskForm
         isOpen={isFormOpen}
         onClose={() => setIsFormOpen(false)}
         onSubmit={handleCreateTask}
         loading={createTaskLoading}
+        mode="create"
+      />
+
+      {/* Edit Modal */}
+      <TaskForm
+        isOpen={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false);
+          setSelectedTask(null);
+        }}
+        onSubmit={handleEditTask}
+        loading={updateTaskLoading}
+        mode="edit"
+        initialData={
+          selectedTask
+            ? {
+                id: selectedTask.id,
+                title: selectedTask.title,
+                description: selectedTask.description,
+                assignedToId:
+                  selectedTask.assignedToId ||
+                  selectedTask.assignedTo?.id ||
+                  "",
+                ownerId: selectedTask.ownerId || selectedTask.owner?.id || "",
+              }
+            : undefined
+        }
+      />
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmation
+        isOpen={isDeleteModalOpen}
+        onClose={() => {
+          setIsDeleteModalOpen(false);
+          setSelectedTask(null);
+        }}
+        onConfirm={handleDeleteTask}
+        taskTitle={selectedTask?.title || ""}
+        taskId={selectedTask?.id || ""}
+        loading={deleteTaskLoading}
       />
     </>
   );
