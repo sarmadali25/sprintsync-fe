@@ -13,7 +13,35 @@ const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
   onClose,
   task,
 }) => {
+
   if (!isOpen || !task) return null;
+  const formatTimeSpent = (minutes: number): string => {
+    if (!minutes || minutes <= 0) return "0 minutes";
+    
+    const days = Math.floor(minutes / (24 * 60));
+    const hours = Math.floor((minutes % (24 * 60)) / 60);
+    const mins = minutes % 60;
+    
+    let result = "";
+    
+    if (days > 0) {
+      result += `${days} Days `;
+    }
+    
+    if (hours > 0) {
+      result += `${hours} Hours `;
+    }
+    
+    if (mins > 0 || (days === 0 && hours === 0)) {
+      result += `${mins} Minutes`;
+    }
+    
+    return result.trim();
+  };
+  const timeSpentInMinutes = task?.totalTime;
+  const formattedTimeSpent = formatTimeSpent(timeSpentInMinutes);
+  
+  
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
@@ -97,11 +125,17 @@ const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
             <Text variant="h4" weight="medium" className="text-gray-700 mb-3">
               Description
             </Text>
-            <div className="bg-gray-50 rounded-lg p-4">
+            <div className="bg-gray-50 rounded-lg p-4 min-h-[250px] max-h-[250px] overflow-y-auto">
               <Text variant="body" className="text-gray-700 whitespace-pre-wrap">
                 {task.description}
               </Text>
             </div>
+          </div>
+
+          <div className="mb-6">
+            <Text variant="h4" weight="medium" className="text-gray-700 mb-3">
+            Total Time Spent: <span className="text-sm text-gray-500">{`${formattedTimeSpent}`}</span>
+            </Text>
           </div>
 
           {/* Task Meta Information */}
