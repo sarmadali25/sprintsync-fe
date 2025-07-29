@@ -31,7 +31,10 @@ const Task = () => {
     updateTaskLoading,
     deleteTaskLoading,
   } = useAppSelector((state) => state.tasks);
-  
+  const {
+    user: { data: currentUser },
+  } = useAppSelector((state) => state.user);
+  const isAdmin = currentUser?.isAdmin;
 
   const handleCreateTask = async (taskData: any) => {
     try {
@@ -88,13 +91,18 @@ const Task = () => {
 
   const handleMoveToNext = async (task: any) => {
     try {
-      const nextStatus = task.status === "pending" ? "in_progress" : "completed";
-      
-      await dispatch(updateTaskStatus({ taskId: task.id, status: nextStatus })).unwrap();
-      await dispatch(fetchTasks())
+      const nextStatus =
+        task.status === "pending" ? "in_progress" : "completed";
+
+      await dispatch(
+        updateTaskStatus({ taskId: task.id, status: nextStatus })
+      ).unwrap();
+      await dispatch(fetchTasks());
       showSuccessToast({
         title: "Success!",
-        text: `Task moved to ${nextStatus === "in_progress" ? "In Progress" : "Completed"}`,
+        text: `Task moved to ${
+          nextStatus === "in_progress" ? "In Progress" : "Completed"
+        }`,
       });
       await dispatch(fetchTasks());
     } catch (error) {
@@ -166,21 +174,24 @@ const Task = () => {
           <Text variant="h1" weight="semibold" className="text-primary">
             Task List
           </Text>
-          <Button
-            variant="primary"
-            className="w-fit"
-            onClick={() => setIsFormOpen(true)}
-          >
-            <Text variant="medium" className="">
-              Create Task
-            </Text>
-          </Button>
+          {isAdmin && (
+            <Button
+              variant="primary"
+              className="w-fit"
+              onClick={() => setIsFormOpen(true)}
+            >
+              <Text variant="medium" className="">
+                Create Task
+              </Text>
+            </Button>
+          )}
         </div>
 
         {/* Boards */}
         <div className="w-full grid grid-cols-1 md:grid-cols-3 mb-3 gap-2 ">
           <TaskList
             heading="TODO"
+            isAdmin={isAdmin || false}
             todoList={tasks || []}
             onClick={() => {}}
             onEdit={handleEditModalOpen}
@@ -189,6 +200,7 @@ const Task = () => {
           />
           <TaskList
             heading="In-Progress"
+            isAdmin={isAdmin || false}
             todoList={tasks || []}
             onClick={() => {}}
             onEdit={handleEditModalOpen}
@@ -197,6 +209,7 @@ const Task = () => {
           />
           <TaskList
             heading="Completed"
+            isAdmin={isAdmin || false}
             todoList={tasks || []}
             onClick={() => {}}
             onEdit={handleEditModalOpen}

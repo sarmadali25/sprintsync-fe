@@ -53,3 +53,13 @@ interface FormSelectProps {
     label: string;
   }>;
 }
+
+interface TaskListProps {
+  heading: string;
+  todoList: any[];
+  onClick: (item: any) => void;
+  onEdit?: (task: any) => void;
+  onDelete?: (task: any) => void;
+  onMoveToNext?: (task: any) => void;
+  isAdmin: boolean;
+}

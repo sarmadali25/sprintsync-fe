@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { apiGet, apiPost, apiPut, apiDelete } from "../../utils/api";
+import { apiGet, apiPost, apiPut, apiDelete, apiPatch } from "../../utils/api";
 
 const initialState: TasksState = {
   tasks: [],
@@ -68,7 +68,7 @@ export const deleteTask = createAsyncThunk(
 export const updateTaskStatus = createAsyncThunk(
   "tasks/updateTaskStatus", 
   async ({ taskId, status }: { taskId: string; status: 'pending' | 'in_progress' | 'completed' }) => {
-    const response = await apiPut(`/task/${taskId}`, {status});
+    const response = await apiPatch(`/task/${taskId}`, {status});
     if (response.status !== 200) {
       throw new Error(response.data.message || "Failed to update task");
     }

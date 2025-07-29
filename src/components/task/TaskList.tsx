@@ -16,14 +16,8 @@ const TaskList = ({
   onEdit,
   onDelete,
   onMoveToNext,
-}: {
-  heading: string;
-  todoList: any[];
-  onClick: (item: any) => void;
-  onEdit?: (task: any) => void;
-  onDelete?: (task: any) => void;
-  onMoveToNext?: (task: any) => void;
-}) => {
+  isAdmin,
+}: TaskListProps) => {
   // Map heading to API status values
   const getStatusFromHeading = (heading: string) => {
     switch (heading.toLowerCase()) {
@@ -185,13 +179,15 @@ const TaskList = ({
                       ? "Completed"
                       : item.status}
                   </div>
-                  <IconButton
-                    size="small"
-                    onClick={(e) => handleMenuOpen(e, item)}
-                    className="text-gray-400 hover:text-gray-600 hover:bg-gray-100"
-                  >
-                    <MoreVert fontSize="small" />
-                  </IconButton>
+                  {isAdmin && (
+                    <IconButton
+                      size="small"
+                      onClick={(e) => handleMenuOpen(e, item)}
+                      className="text-gray-400 hover:text-gray-600 hover:bg-gray-100"
+                    >
+                      <MoreVert fontSize="small" />
+                    </IconButton>
+                  )}
                 </div>
               </div>
 
@@ -279,7 +275,10 @@ const TaskList = ({
                   >
                     <ArrowForward fontSize="small" />
                     <span>
-                      Move to {nextStatus === "in_progress" ? "In Progress" : "Completed"}
+                      Move to{" "}
+                      {nextStatus === "in_progress"
+                        ? "In Progress"
+                        : "Completed"}
                     </span>
                   </button>
                 </div>

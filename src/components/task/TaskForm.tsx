@@ -17,6 +17,8 @@ const TaskForm: React.FC<TaskFormProps> = ({
   const dispatch = useAppDispatch();
 
   const { user } = useAppSelector((state) => state.user);
+  const isAdmin = user?.data?.isAdmin;
+  
   const { userList } = useAppSelector((state) => state.user);
 
   const [formData, setFormData] = useState<TaskFormData>({
@@ -123,7 +125,9 @@ const TaskForm: React.FC<TaskFormProps> = ({
   }, [mode, initialData, user?.data?.id]);
 
   useEffect(() => {
-    dispatch(fetchUserList());
+    if (isAdmin) {
+      dispatch(fetchUserList());
+    }
   }, []);
 
   if (!isOpen) return null;
