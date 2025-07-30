@@ -59,7 +59,6 @@ interface FormSelectProps {
 interface TaskListProps {
   heading: string;
   todoList: any[];
-  onClick: (item: any) => void;
   onEdit?: (task: any) => void;
   onDelete?: (task: any) => void;
   onMoveToNext?: (task: any) => void;
@@ -71,4 +70,24 @@ interface TaskDetailModalProps {
   isOpen: boolean;
   onClose: () => void;
   task: any;
+}
+
+interface Task {
+  id: string;
+  title: string;
+  description: string;
+  status: string;
+  totalTime?: number;
+  createdAt: string;
+  updatedAt: string;
+  assignedToId: string;
+  ownerId: string;
+  owner: {
+    firstName: string;
+    lastName: string;
+  };
+  assignedTo: {
+    firstName: string;
+    lastName: string;
+  };
 }

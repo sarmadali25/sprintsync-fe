@@ -1,9 +1,8 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Button from "../button/Button";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import Text from "../text/Text";
-import { cn } from "../../utils";
 import { useAppSelector } from "../../store/hooks";
 import { useDispatch } from "react-redux";
 import { logout } from "../../store/slices/userSlice";
