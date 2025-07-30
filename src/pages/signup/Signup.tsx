@@ -4,7 +4,7 @@ import { AuthLayout, FormInput, FormButton } from "../../components/form";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { registerUser, clearRegisterUser } from "../../store/slices/userSlice";
-import { showSuccessToast, showErrorToast } from "../../utils/toast";
+import { showSuccessToast, showErrorToast } from "../../utils/common.utils";
 
 const Signup: React.FC = () => {
   const dispatch = useAppDispatch();

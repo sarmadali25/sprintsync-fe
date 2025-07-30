@@ -4,7 +4,7 @@ import { AuthLayout, FormInput, FormButton } from "../../components/form";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { loginUser } from "../../store/slices/userSlice";
-import { showSuccessToast, showErrorToast } from "../../utils/toast";
+import { showErrorToast } from "../../utils/common.utils";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();

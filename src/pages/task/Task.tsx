@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import Task from "../../components/task/Task";
 
-const Home = () => {
+const TaskPage = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -13,4 +13,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default TaskPage;

@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import { useEffect } from "react";
 import MainLayout from "../layout/main-layout/MainLayout";
-import Home from "../pages/home/Home";
+import Task from "../pages/task/Task";
 import Login from "../pages/login/Login";
 import Signup from "../pages/signup/Signup";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
@@ -35,7 +35,7 @@ const AppRouter = () => {
     { path: "/signup", component: <Signup /> },
   ];
   const mainRoutes = [
-    {path: "/task", component: <Home />},
+    {path: "/task", component: <Task />},
   ];
 
   return (

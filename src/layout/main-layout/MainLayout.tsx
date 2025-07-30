@@ -4,7 +4,7 @@ import useMediaQuery from "../../hooks/useMediaQuery";
 import { cn } from "../../utils";
 
 const MainLayout = ({ children }: { children: React.ReactNode }) => {
-  const isDesktop = useMediaQuery("(min-width: 1001px)");
+  const isDesktop = useMediaQuery("(min-width: 768px)");
 
   return (
     <div className="w-screen bg-gray-100">
