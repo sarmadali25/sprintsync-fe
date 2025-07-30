@@ -34,7 +34,7 @@ export const useTask = () => {
   const userId = currentUser?.id;
 
   const handleCreateTask = async (
-    taskData: Omit<TaskAttributes, "id" | "createdAt" | "updatedAt">
+    taskData: any
   ) => {
     try {
       await dispatch(createTask(taskData)).unwrap();
@@ -53,7 +53,7 @@ export const useTask = () => {
   };
 
   const handleEditTask = async (
-    taskData: Omit<TaskAttributes, "id" | "createdAt" | "updatedAt">
+    taskData: any
   ) => {
     try {
       await dispatch(updateTask(taskData)).unwrap();

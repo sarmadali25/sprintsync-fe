@@ -66,10 +66,12 @@ interface Task {
   assignedToId: string;
   ownerId: string;
   owner: {
+    id: string;
     firstName: string;
     lastName: string;
   };
   assignedTo: {
+    id: string;
     firstName: string;
     lastName: string;
   };

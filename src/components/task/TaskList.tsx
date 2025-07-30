@@ -248,7 +248,7 @@ const TaskList = ({
       <TaskDetailModal
         isOpen={isDetailModalOpen}
         onClose={handleDetailModalClose}
-        task={selectedTaskForDetail}
+        task={selectedTaskForDetail as Task}
       />
     </div>
   );
