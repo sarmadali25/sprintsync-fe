@@ -93,6 +93,9 @@ const userSlice = createSlice({
         error: null,
         data: null
       };
+    },
+    clearLoginError: (state) => {
+      state.user.error = null;
     }
   },
   extraReducers: (builder) => {
@@ -159,6 +162,7 @@ const userSlice = createSlice({
 export const {
   logout,
   clearRegisterUser,
+  clearLoginError,
 } = userSlice.actions;
 
 export default userSlice.reducer; 

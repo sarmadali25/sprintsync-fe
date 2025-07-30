@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { loginUser } from "../store/slices/userSlice";
+import { clearLoginError, loginUser } from "../store/slices/userSlice";
 import { showErrorToast } from "../utils/common.utils";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 
@@ -78,6 +78,7 @@ const useLoginForm = () => {
           title: "Login Failed",
           text: loginError
         });
+        dispatch(clearLoginError());
       }
     }, [isLoading, loginData, loginError, dispatch, navigate]);
 
