@@ -1,132 +1,37 @@
-import { useEffect, useState } from "react";
-
 import Text from "../text/Text";
 import TaskList from "./TaskList";
 import TaskForm from "./TaskForm";
 import Button from "../button/Button";
 import DeleteConfirmation from "./TaskDelete";
-import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { showSuccessToast, showErrorToast } from "../../utils/toast";
-import {
-  fetchTasks,
-  createTask,
-  updateTask,
-  deleteTask,
-  updateTaskStatus,
-} from "../../store/slices/tasksSlice";
+import { useTask } from "../../hooks/useTask";
 
 const Task = () => {
-  const dispatch = useAppDispatch();
-
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [selectedTask, setSelectedTask] = useState<any>(null);
-
   const {
     tasks,
-    loading,
     error,
+    userId,
+    isAdmin,
+    loading,
+    isFormOpen,
+    selectedTask,
+    isEditModalOpen,
+    isDeleteModalOpen,
     createTaskLoading,
     updateTaskLoading,
     deleteTaskLoading,
-  } = useAppSelector((state) => state.tasks);
-  const {
-    user: { data: currentUser },
-  } = useAppSelector((state) => state.user);
-  const isAdmin = currentUser?.isAdmin;
-  const userId = currentUser?.id;
 
-  const handleCreateTask = async (taskData: any) => {
-    try {
-      await dispatch(createTask(taskData)).unwrap();
-      showSuccessToast({
-        title: "Success!",
-        text: "Task created successfully",
-      });
-      await dispatch(fetchTasks());
-      setIsFormOpen(false);
-    } catch (error) {
-      // Error toast
-      showErrorToast({
-        title: "Error!",
-        text: (error as Error)?.message || "Failed to create task",
-      });
-    }
-  };
-
-  const handleEditTask = async (taskData: any) => {
-    try {
-      await dispatch(updateTask(taskData)).unwrap();
-      showSuccessToast({
-        title: "Success!",
-        text: "Task updated successfully",
-      });
-      setIsEditModalOpen(false);
-      setSelectedTask(null);
-      dispatch(fetchTasks());
-    } catch (error) {
-      showErrorToast({
-        title: "Error!",
-        text: (error as Error)?.message || "Failed to update task",
-      });
-    }
-  };
-
-  const handleDeleteTask = async (taskId: string) => {
-    try {
-      await dispatch(deleteTask(taskId)).unwrap();
-      showSuccessToast({
-        title: "Success!",
-        text: "Task deleted successfully",
-      });
-      setIsDeleteModalOpen(false);
-      setSelectedTask(null);
-    } catch (error) {
-      showErrorToast({
-        title: "Error!",
-        text: (error as Error)?.message || "Failed to delete task",
-      });
-    }
-  };
-
-  const handleMoveToNext = async (task: any) => {
-    try {
-      const nextStatus =
-        task.status === "pending" ? "in_progress" : "completed";
-
-      await dispatch(
-        updateTaskStatus({ taskId: task.id, status: nextStatus })
-      ).unwrap();
-      await dispatch(fetchTasks());
-      showSuccessToast({
-        title: "Success!",
-        text: `Task moved to ${
-          nextStatus === "in_progress" ? "In Progress" : "Completed"
-        }`,
-      });
-      await dispatch(fetchTasks());
-    } catch (error) {
-      showErrorToast({
-        title: "Error!",
-        text: (error as Error)?.message || "Failed to move task",
-      });
-    }
-  };
-
-  const handleEditModalOpen = (task: any) => {
-    setSelectedTask(task);
-    setIsEditModalOpen(true);
-  };
-
-  const handleDeleteModalOpen = (task: any) => {
-    setSelectedTask(task);
-    setIsDeleteModalOpen(true);
-  };
-
-  useEffect(() => {
-    dispatch(fetchTasks());
-  }, []);
+    handleEditTask,
+    handleCreateTask,
+    handleDeleteTask,
+    handleMoveToNext,
+    handleEditModalOpen,
+    handleDeleteModalOpen,
+    
+    openFormModal,
+    closeFormModal,
+    closeEditModal,
+    closeDeleteModal,
+  } = useTask();
 
   if (loading) {
     return (
@@ -179,7 +84,7 @@ const Task = () => {
             <Button
               variant="primary"
               className="w-fit"
-              onClick={() => setIsFormOpen(true)}
+              onClick={openFormModal}
             >
               <Text variant="medium" className="">
                 Create Task
@@ -195,7 +100,6 @@ const Task = () => {
             isAdmin={isAdmin || false}
             userId={userId || ""}
             todoList={tasks || []}
-            onClick={() => {}}
             onEdit={handleEditModalOpen}
             onDelete={handleDeleteModalOpen}
             onMoveToNext={handleMoveToNext}
@@ -205,7 +109,6 @@ const Task = () => {
             isAdmin={isAdmin || false}
             userId={userId || ""}
             todoList={tasks || []}
-            onClick={() => {}}
             onEdit={handleEditModalOpen}
             onDelete={handleDeleteModalOpen}
             onMoveToNext={handleMoveToNext}
@@ -215,7 +118,6 @@ const Task = () => {
             isAdmin={isAdmin || false}
             userId={userId || ""}
             todoList={tasks || []}
-            onClick={() => {}}
             onEdit={handleEditModalOpen}
             onDelete={handleDeleteModalOpen}
           />
@@ -225,7 +127,7 @@ const Task = () => {
       {/* Add Task Form Modal */}
       <TaskForm
         isOpen={isFormOpen}
-        onClose={() => setIsFormOpen(false)}
+        onClose={closeFormModal}
         onSubmit={handleCreateTask}
         loading={createTaskLoading}
         mode="create"
@@ -234,10 +136,7 @@ const Task = () => {
       {/* Edit Modal */}
       <TaskForm
         isOpen={isEditModalOpen}
-        onClose={() => {
-          setIsEditModalOpen(false);
-          setSelectedTask(null);
-        }}
+        onClose={closeEditModal}
         onSubmit={handleEditTask}
         loading={updateTaskLoading}
         mode="edit"
@@ -260,10 +159,7 @@ const Task = () => {
       {/* Delete Confirmation Modal */}
       <DeleteConfirmation
         isOpen={isDeleteModalOpen}
-        onClose={() => {
-          setIsDeleteModalOpen(false);
-          setSelectedTask(null);
-        }}
+        onClose={closeDeleteModal}
         onConfirm={handleDeleteTask}
         taskTitle={selectedTask?.title || ""}
         taskId={selectedTask?.id || ""}
