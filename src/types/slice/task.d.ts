@@ -39,23 +39,6 @@ interface TaskFormProps {
   mode: "create" | "edit";
   initialData?: TaskFormData;
 }
-
-interface FormSelectProps {
-  id: string;
-  name: string;
-  label: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  placeholder?: string;
-  error?: string;
-  disabled?: boolean;
-  required?: boolean;
-  options: Array<{
-    value: string;
-    label: string;
-  }>;
-}
-
 interface TaskListProps {
   heading: string;
   todoList: any[];

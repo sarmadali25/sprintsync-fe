@@ -15,7 +15,7 @@ export const useTask = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [selectedTask, setSelectedTask] = useState<any>(null);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
   const {
     tasks,
@@ -25,15 +25,17 @@ export const useTask = () => {
     updateTaskLoading,
     deleteTaskLoading,
   } = useAppSelector((state) => state.tasks);
-  
+
   const {
     user: { data: currentUser },
   } = useAppSelector((state) => state.user);
-  
+
   const isAdmin = currentUser?.isAdmin;
   const userId = currentUser?.id;
 
-  const handleCreateTask = async (taskData: any) => {
+  const handleCreateTask = async (
+    taskData: Omit<TaskAttributes, "id" | "createdAt" | "updatedAt">
+  ) => {
     try {
       await dispatch(createTask(taskData)).unwrap();
       showSuccessToast({
@@ -50,7 +52,9 @@ export const useTask = () => {
     }
   };
 
-  const handleEditTask = async (taskData: any) => {
+  const handleEditTask = async (
+    taskData: Omit<TaskAttributes, "id" | "createdAt" | "updatedAt">
+  ) => {
     try {
       await dispatch(updateTask(taskData)).unwrap();
       showSuccessToast({
@@ -85,13 +89,17 @@ export const useTask = () => {
     }
   };
 
-  const handleMoveToNext = async (task: any) => {
+  const handleMoveToNext = async (
+    task: Omit<TaskAttributes, "createdAt" | "updatedAt">
+  ) => {
     try {
       const nextStatus =
         task.status === "pending" ? "in_progress" : "completed";
 
+      if (!task.id)
+        throw new Error("Failed to fetch task id please try again.");
       await dispatch(
-        updateTaskStatus({ taskId: task.id, status: nextStatus })
+        updateTaskStatus({ taskId: task.id!, status: nextStatus })
       ).unwrap();
       await dispatch(fetchTasks());
       showSuccessToast({
@@ -159,11 +167,11 @@ export const useTask = () => {
     handleMoveToNext,
     handleEditModalOpen,
     handleDeleteModalOpen,
-    
+
     // Modal controls
     closeFormModal,
     closeEditModal,
     closeDeleteModal,
     openFormModal,
   };
-}; 
+};

@@ -6,7 +6,7 @@ import { useTaskDetail } from "../../hooks/useTaskDetail";
 interface TaskDetailModalProps {
   isOpen: boolean;
   onClose: () => void;
-  task: any;
+  task: Task;
 }
 
 const TaskDetailModal: React.FC<TaskDetailModalProps> = ({

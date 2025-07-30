@@ -41,7 +41,7 @@ export const createTask = createAsyncThunk(
 
 export const updateTask = createAsyncThunk(
   "tasks/updateTask", 
-  async (taskData: TaskAttributes) => {
+  async (taskData: Omit<TaskAttributes, 'createdAt' | 'updatedAt'>) => {
     const {id, ...rest} = taskData;
     const response = await apiPut(`/task/${taskData.id}`, rest);
     

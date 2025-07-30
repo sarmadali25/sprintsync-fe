@@ -53,3 +53,20 @@ interface FormInputProps {
   textarea?: boolean;
   rows?: number;
 }
+
+interface FormSelectProps {
+  id: string;
+  name: string;
+  label: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  placeholder?: string;
+  error?: string;
+  disabled?: boolean;
+  required?: boolean;
+  options: Array<{
+    value: string;
+    label: string;
+  }>;
+}
+
