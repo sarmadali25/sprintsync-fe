@@ -1,5 +1,14 @@
 import { useState, useMemo } from "react";
-import { getStatusFromHeading, getStatusColor, getStatusText, formatDate, getNextStatus, getStatusCardColor, getHeaderDotColor, getMoveButtonGradient } from "../utils/common.utils";
+import {
+  formatDate,
+  getStatusText,
+  getNextStatus,
+  getStatusColor,
+  getHeaderDotColor,
+  getStatusCardColor,
+  getStatusFromHeading,
+  getMoveButtonGradient,
+} from "../utils/common.utils";
 
 export const useTaskList = (
   heading: string,
@@ -11,10 +20,9 @@ export const useTaskList = (
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
-  const [selectedTaskForDetail, setSelectedTaskForDetail] = useState<Task | null>(null);
+  const [selectedTaskForDetail, setSelectedTaskForDetail] =
+    useState<Task | null>(null);
 
-
-  
   const filteredTasks = useMemo(() => {
     return todoList.filter(
       (task) => task.status === getStatusFromHeading(heading)
@@ -78,7 +86,7 @@ export const useTaskList = (
     nextStatus,
     canMoveToNext,
     taskCount,
-    
+
     getStatusFromHeading,
     getNextStatus,
     getStatusCardColor,
@@ -87,7 +95,7 @@ export const useTaskList = (
     getHeaderDotColor,
     getMoveButtonGradient,
     formatDate,
-    
+
     handleMenuOpen,
     handleMenuClose,
     handleEdit,
@@ -96,4 +104,4 @@ export const useTaskList = (
     handleTaskClick,
     handleDetailModalClose,
   };
-}; 
+};

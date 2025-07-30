@@ -47,7 +47,7 @@ const MobileNavbar = () => {
           isMenuOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="flex flex-col items-start gap-4 px-5 py-8 w-full">
+        <div className="flex flex-col items-start gap-4 px-5 py-8 w-full mt-10">
           {user ? (
             <Button variant="secondary" onClick={handleSignOut}>
               <Text variant="medium" className="">
