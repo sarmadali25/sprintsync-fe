@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import { MoreVert, Edit, Delete, ArrowForward } from "@mui/icons-material";
 import {
   IconButton,
@@ -9,122 +8,38 @@ import {
 } from "@mui/material";
 import Text from "../text/Text";
 import TaskDetailModal from "./TaskDetailModal";
+import { useTaskList } from "../../hooks/useTaskList";
 
 const TaskList = ({
   heading,
   todoList,
-  onClick,
   onEdit,
   onDelete,
   onMoveToNext,
   isAdmin,
   userId,
 }: TaskListProps) => {
-  // Map heading to API status values
-  const getStatusFromHeading = (heading: string) => {
-    switch (heading.toLowerCase()) {
-      case "todo":
-        return "pending";
-      case "in-progress":
-        return "in_progress";
-      case "completed":
-        return "completed";
-      default:
-        return "pending";
-    }
-  };
-
-  // Get next status for the current heading
-  const getNextStatus = (heading: string) => {
-    switch (heading.toLowerCase()) {
-      case "todo":
-        return "in_progress";
-      case "in-progress":
-        return "completed";
-      default:
-        return null;
-    }
-  };
-
-  // Filter tasks by status
-  const filteredTasks = todoList.filter(
-    (task) => task.status === getStatusFromHeading(heading)
-  );
-
-  const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
-      case "pending":
-        return "border-l-4 border-l-orange-400 bg-orange-50";
-      case "in_progress":
-        return "border-l-4 border-l-blue-400 bg-blue-50";
-      case "completed":
-        return "border-l-4 border-l-green-400 bg-green-50";
-      default:
-        return "border-l-4 border-l-gray-400 bg-gray-50";
-    }
-  };
-
-  const getStatusBadge = (status: string) => {
-    switch (status.toLowerCase()) {
-      case "pending":
-        return "bg-orange-100 text-orange-700 border-orange-200";
-      case "in_progress":
-        return "bg-blue-100 text-blue-700 border-blue-200";
-      case "completed":
-        return "bg-green-100 text-green-700 border-green-200";
-      default:
-        return "bg-gray-100 text-gray-700 border-gray-200";
-    }
-  };
-
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [selectedTask, setSelectedTask] = useState<any>(null);
-  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
-  const [selectedTaskForDetail, setSelectedTaskForDetail] = useState<any>(null);
-
-  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>, task: any) => {
-    event.stopPropagation();
-    setAnchorEl(event.currentTarget);
-    setSelectedTask(task);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-    setSelectedTask(null);
-  };
-
-  const handleEdit = () => {
-    if (onEdit && selectedTask) {
-      onEdit(selectedTask);
-    }
-    handleMenuClose();
-  };
-
-  const handleDelete = () => {
-    if (onDelete && selectedTask) {
-      onDelete(selectedTask);
-    }
-    handleMenuClose();
-  };
-
-  const handleMoveToNext = (task: any) => {
-    if (onMoveToNext) {
-      onMoveToNext(task);
-    }
-  };
-
-  const handleTaskClick = (task: any) => {
-    setSelectedTaskForDetail(task);
-    setIsDetailModalOpen(true);
-  };
-
-  const handleDetailModalClose = () => {
-    setIsDetailModalOpen(false);
-    setSelectedTaskForDetail(null);
-  };
-
-  const nextStatus = getNextStatus(heading);
-  const canMoveToNext = nextStatus !== null;
+  const {
+    anchorEl,
+    isDetailModalOpen,
+    selectedTaskForDetail,
+    filteredTasks,
+    nextStatus,
+    canMoveToNext,
+    taskCount,
+    getStatusCardColor,
+    getStatusColor,
+    getStatusText,
+    getHeaderDotColor,
+    getMoveButtonGradient,
+    handleMenuOpen,
+    handleMenuClose,
+    handleEdit,
+    handleDelete,
+    handleMoveToNext,
+    handleTaskClick,
+    handleDetailModalClose,
+  } = useTaskList(heading, todoList, onEdit, onDelete, onMoveToNext);
 
   return (
     <div className="w-full flex flex-col bg-white rounded-xl shadow-sm border border-gray-100 min-h-[70vh] max-h-[70vh] overflow-hidden">
@@ -132,21 +47,13 @@ const TaskList = ({
       <div className="w-full flex items-center justify-between px-6 py-4 bg-gradient-to-r from-gray-50 to-white border-b border-gray-100 sticky top-0 z-[0]">
         <div className="flex items-center gap-3">
           <div
-            className={`w-3 h-3 rounded-full ${
-              heading.toLowerCase() === "todo"
-                ? "bg-orange-400"
-                : heading.toLowerCase() === "in-progress"
-                ? "bg-blue-400"
-                : heading.toLowerCase() === "completed"
-                ? "bg-green-400"
-                : "bg-gray-400"
-            }`}
+            className={`w-3 h-3 rounded-full ${getHeaderDotColor(heading)}`}
           ></div>
           <Text variant="h2" weight="semibold" className="text-gray-800">
             {heading}
           </Text>
           <div className="bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs font-medium">
-            {filteredTasks?.length || 0}
+            {taskCount}
           </div>
         </div>
       </div>
@@ -156,7 +63,7 @@ const TaskList = ({
         {filteredTasks && filteredTasks.length > 0 ? (
           filteredTasks.map((item, index) => (
             <div
-              className={`w-full p-4 rounded-lg cursor-pointer transition-all duration-200 hover:shadow-md hover:scale-[1.02] ${getStatusColor(
+              className={`w-full p-4 rounded-lg cursor-pointer transition-all duration-200 hover:shadow-md hover:scale-[1.02] ${getStatusCardColor(
                 item.status
               )}`}
               key={item.id}
@@ -181,17 +88,11 @@ const TaskList = ({
                 </div>
                 <div className="flex items-center gap-2 ml-3">
                   <div
-                    className={`px-2 py-1 rounded-full text-xs font-medium border ${getStatusBadge(
+                    className={`px-2 py-1 rounded-full text-xs font-medium border ${getStatusColor(
                       item.status
                     )}`}
                   >
-                    {item.status === "pending"
-                      ? "TODO"
-                      : item.status === "in_progress"
-                      ? "In Progress"
-                      : item.status === "completed"
-                      ? "Completed"
-                      : item.status}
+                    {getStatusText(item.status)}
                   </div>
                   {isAdmin && (
                     <IconButton
@@ -279,13 +180,7 @@ const TaskList = ({
                       e.stopPropagation();
                       handleMoveToNext(item);
                     }}
-                    className={`w-full flex items-center justify-center gap-2 px-3 py-2 text-white text-sm font-medium rounded-lg transition-all duration-200 hover:shadow-md hover:scale-[1.02] ${
-                      heading.toLowerCase() === "todo"
-                        ? "bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700"
-                        : heading.toLowerCase() === "in-progress"
-                        ? "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
-                        : "bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700"
-                    }`}
+                    className={`w-full flex items-center justify-center gap-2 px-3 py-2 text-white text-sm font-medium rounded-lg transition-all duration-200 hover:shadow-md hover:scale-[1.02] ${getMoveButtonGradient(heading)}`}
                   >
                     <ArrowForward fontSize="small" />
                     <span>
