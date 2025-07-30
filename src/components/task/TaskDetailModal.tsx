@@ -1,6 +1,7 @@
 import React from "react";
 import { X, Calendar, User, Users } from "lucide-react";
 import Text from "../text/Text";
+import { useTaskDetail } from "../../hooks/useTaskDetail";
 
 interface TaskDetailModalProps {
   isOpen: boolean;
@@ -13,58 +14,9 @@ const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
   onClose,
   task,
 }) => {
-  if (!isOpen || !task) return null;
-  const formatTimeSpent = (minutes: number): string => {
-    if (!minutes || minutes <= 0) return "0 minutes";
+  const { taskDetails } = useTaskDetail(task);
 
-    const days = Math.floor(minutes / (24 * 60));
-    const hours = Math.floor((minutes % (24 * 60)) / 60);
-    const mins = minutes % 60;
-
-    let result = "";
-
-    if (days > 0) {
-      result += `${days} Days `;
-    }
-
-    if (hours > 0) {
-      result += `${hours} Hours `;
-    }
-
-    if (mins > 0 || (days === 0 && hours === 0)) {
-      result += `${mins} Minutes`;
-    }
-
-    return result.trim();
-  };
-  const timeSpentInMinutes = task?.totalTime;
-  const formattedTimeSpent = formatTimeSpent(timeSpentInMinutes);
-
-  const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
-      case "pending":
-        return "bg-orange-100 text-orange-700 border-orange-200";
-      case "in_progress":
-        return "bg-blue-100 text-blue-700 border-blue-200";
-      case "completed":
-        return "bg-green-100 text-green-700 border-green-200";
-      default:
-        return "bg-gray-100 text-gray-700 border-gray-200";
-    }
-  };
-
-  const getStatusText = (status: string) => {
-    switch (status.toLowerCase()) {
-      case "pending":
-        return "TODO";
-      case "in_progress":
-        return "In Progress";
-      case "completed":
-        return "Completed";
-      default:
-        return status;
-    }
-  };
+  if (!isOpen || !task || !taskDetails) return null;
 
   return (
     <div className="fixed inset-0 bg-gradient-to-br from-slate-50/50 via-blue-50/50 to-indigo-100/50 flex items-center justify-center z-50 p-4">
@@ -92,11 +44,9 @@ const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
                 Task Details
               </Text>
               <div
-                className={`inline-block px-2 py-1 rounded-full text-xs font-medium border mt-1 ${getStatusColor(
-                  task.status
-                )}`}
+                className={`inline-block px-2 py-1 rounded-full text-xs font-medium border mt-1 ${taskDetails.statusColor}`}
               >
-                {getStatusText(task.status)}
+                {taskDetails.statusText}
               </div>
             </div>
           </div>
@@ -132,28 +82,23 @@ const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
             </div>
           </div>
 
-          {getStatusText(task.status) === "In Progress" && task?.totalTime && (
+          {taskDetails.showStartedOn && (
             <div className="mb-6">
               <Text variant="h4" weight="medium" className="text-gray-700 mb-3">
                 Started on:{" "}
                 <span className="text-sm text-gray-500">
-                  {new Date(task.createdAt).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
+                  {taskDetails.formattedCreatedDate}
                 </span>
               </Text>
             </div>
           )}
+          
           {/* Total Time Spent */}
-          {getStatusText(task.status) === "Completed" && (
+          {taskDetails.showTotalTime && (
             <div className="mb-6">
               <Text variant="h4" weight="medium" className="text-gray-700 mb-3">
                 Total Time Spent:{" "}
-                <span className="text-sm text-gray-500">{`${formattedTimeSpent}`}</span>
+                <span className="text-sm text-gray-500">{taskDetails.formattedTimeSpent}</span>
               </Text>
             </div>
           )}
@@ -211,19 +156,13 @@ const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
                     weight="medium"
                     className="text-gray-700"
                   >
-                    {new Date(task.createdAt).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
+                    {taskDetails.formattedCreatedDate}
                   </Text>
                 </div>
               </div>
 
               {/* Updated date */}
-              {task.updatedAt && (
+              {taskDetails.formattedUpdatedDate && (
                 <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                   <Calendar className="w-5 h-5 text-gray-500" />
                   <div>
@@ -235,13 +174,7 @@ const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
                       weight="medium"
                       className="text-gray-700"
                     >
-                      {new Date(task.updatedAt).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
+                      {taskDetails.formattedUpdatedDate}
                     </Text>
                   </div>
                 </div>
